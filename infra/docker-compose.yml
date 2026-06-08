@@ -45,6 +45,7 @@ services:
       DEV_SKIP_AUTH: ${DEV_SKIP_AUTH:-true}
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      REDIS_URL: redis://redis:6379
       COMMENT_SVC_URL: http://comment-svc:3001
       LEAD_SVC_URL: http://lead-svc:3002
       ANALYTICS_SVC_URL: http://analytics-svc:3003
@@ -96,6 +97,7 @@ services:
       DB_PASSWORD_FILE: /run/secrets/db_password
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      REDIS_URL: redis://redis:6379
       OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
       OPENROUTER_BASE_URL: ${OPENROUTER_BASE_URL:-https://openrouter.ai/api/v1}
       OPENROUTER_MODEL: ${OPENROUTER_MODEL:-openai/gpt-4o-mini}
@@ -137,6 +139,7 @@ services:
       DB_PASSWORD_FILE: /run/secrets/db_password
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      REDIS_URL: redis://redis:6379
     secrets:
       - db_password
       - encryption_key
@@ -169,6 +172,7 @@ services:
       DB_PASSWORD_FILE: /run/secrets/db_password
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      REDIS_URL: redis://redis:6379
     secrets:
       - db_password
     networks:
@@ -200,6 +204,7 @@ services:
       DB_PASSWORD_FILE: /run/secrets/db_password
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      REDIS_URL: redis://redis:6379
       OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
       OPENROUTER_BASE_URL: ${OPENROUTER_BASE_URL:-https://openrouter.ai/api/v1}
       OPENROUTER_MODEL: ${OPENROUTER_MODEL:-openai/gpt-4o-mini}
@@ -241,6 +246,7 @@ services:
       DB_PASSWORD_FILE: /run/secrets/db_password
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      REDIS_URL: redis://redis:6379
       OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
       OPENROUTER_BASE_URL: ${OPENROUTER_BASE_URL:-https://openrouter.ai/api/v1}
       OPENROUTER_MODEL: ${OPENROUTER_MODEL:-openai/gpt-4o-mini}

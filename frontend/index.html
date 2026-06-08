@@ -70,7 +70,6 @@
       <div class="column is-2 sidebar">
         <ul class="menu" id="sidebar-nav">
           <li class="is-active" data-page="inbox"><a href="#inbox"><i class="fas fa-inbox"></i> <span>Smart Inbox</span></a></li>
-          <li data-page="auto-reply"><a href="#auto-reply"><i class="fas fa-reply-all"></i> <span>Auto Reply</span></a></li>
           <li data-page="leads"><a href="#leads"><i class="fas fa-bullseye"></i> <span>Lead Capture</span></a></li>
           <li data-page="analytics"><a href="#analytics"><i class="fas fa-chart-bar"></i> <span>Analytics</span></a></li>
           <li data-page="moderation"><a href="#moderation"><i class="fas fa-shield-alt"></i> <span>Moderation</span></a></li>
@@ -85,7 +84,6 @@
       <!-- Main Content -->
       <div class="column is-10 main-content" id="main-content">
         <div id="page-inbox" class="page active"></div>
-        <div id="page-auto-reply" class="page"></div>
         <div id="page-leads" class="page"></div>
         <div id="page-analytics" class="page"></div>
         <div id="page-moderation" class="page"></div>
@@ -94,49 +92,6 @@
         <div id="page-autopilot" class="page"></div>
       </div>
     </div>
-  </div>
-
-  <!-- Reply Modal -->
-  <div class="modal" id="reply-modal">
-    <div class="modal-background" onclick="closeModal('reply-modal')"></div>
-    <div class="modal-content">
-      <div class="box">
-        <h4 class="title is-5 mb-4"><span class="icon"><i class="fas fa-reply"></i></span><span>Auto Reply</span></h4>
-        <div id="reply-comment-preview" class="has-background-light p-3 mb-3" style="border-radius:4px"></div>
-        <div class="field">
-          <label class="label is-size-7">Response</label>
-          <div class="control">
-            <textarea class="textarea is-small" id="reply-textarea" rows="4"></textarea>
-          </div>
-        </div>
-        <div class="columns mt-3">
-          <div class="column is-4">
-            <div class="field">
-              <label class="label is-size-7">Tone</label>
-              <div class="control">
-                <div class="select is-fullwidth is-small">
-                  <select id="reply-tone-select">
-                    <option value="professional">Professional</option>
-                    <option value="friendly">Friendly</option>
-                    <option value="gen_z">Gen Z</option>
-                    <option value="taglish">Taglish</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="column is-4">
-            <label class="label is-size-7">&nbsp;</label>
-            <button id="regenerate-reply-btn" class="button is-light is-small is-fullwidth"><span class="icon"><i class="fas fa-sync"></i></span><span>Regenerate</span></button>
-          </div>
-          <div class="column is-4">
-            <label class="label is-size-7">&nbsp;</label>
-            <button id="send-reply-btn" class="button is-primary is-small is-fullwidth"><span class="icon"><i class="fas fa-paper-plane"></i></span><span>Send Reply</span></button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <button class="modal-close is-large" onclick="closeModal('reply-modal')"></button>
   </div>
 
   <!-- Lead Detail Modal -->
@@ -165,7 +120,6 @@
   <script src="js/auth.js"></script>
   <script src="js/app.js"></script>
   <script src="js/pages/inbox.js"></script>
-  <script src="js/pages/auto-reply.js"></script>
   <script src="js/pages/leads.js"></script>
   <script src="js/pages/analytics.js"></script>
   <script src="js/pages/moderation.js"></script>

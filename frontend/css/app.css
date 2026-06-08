@@ -836,3 +836,254 @@ canvas {
   pointer-events: auto;
   z-index: 2;
 }
+
+/* ── Post Thread Layout ── */
+.post-thread-layout {
+  height: calc(100vh - 49px);
+  margin: 0 !important;
+}
+
+.post-list-panel {
+  background: rgba(15, 23, 42, 0.5);
+  border-right: 1px solid rgba(255,255,255,0.08);
+  overflow-y: auto;
+  height: 100%;
+}
+
+.post-list-header {
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.post-list {
+  padding: 0.5rem;
+}
+
+.post-card {
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.post-card:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.12);
+}
+
+.post-card.is-active {
+  background: linear-gradient(135deg, rgba(59,89,152,0.25), rgba(0,119,255,0.15));
+  border-color: rgba(59,130,246,0.4);
+}
+
+.post-card-text {
+  color: #e2e8f0;
+  line-height: 1.4;
+}
+
+.post-card-meta {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.post-card-stat {
+  font-size: 0.7rem;
+  color: #94a3b8;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.post-card-intents {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+}
+
+/* ── Thread Panel ── */
+.post-thread-panel {
+  overflow-y: auto;
+  height: 100%;
+  padding: 1rem;
+}
+
+.thread-header {
+  border-left: 3px solid rgba(59,130,246,0.5);
+}
+
+.thread-header-stats {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.thread-comments {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* ── Thread Comments ── */
+.thread-comment {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  padding: 0.75rem;
+  transition: border-color 0.2s ease;
+}
+
+.thread-comment:hover {
+  border-color: rgba(255,255,255,0.12);
+}
+
+.thread-comment-nested {
+  margin-left: 2rem;
+  border-left: 2px solid rgba(59,130,246,0.2);
+  background: rgba(255,255,255,0.02);
+}
+
+.thread-comment-body {
+  position: relative;
+}
+
+.thread-comment-tags {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+  margin-top: 0.25rem;
+}
+
+.thread-comment-actions {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.thread-comment-actions .button {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  height: auto;
+}
+
+/* ── Existing Reply ── */
+.thread-existing-reply {
+  margin-top: 0.75rem;
+  padding: 0.5rem;
+  background: rgba(59,130,246,0.08);
+  border-radius: 8px;
+  border: 1px solid rgba(59,130,246,0.15);
+}
+
+.thread-existing-reply .media-content p {
+  color: #cbd5e1;
+}
+
+/* ── Inline Reply ── */
+.thread-inline-reply {
+  margin-top: 0.75rem;
+  animation: slideIn 0.2s ease;
+}
+
+.thread-reply-box {
+  padding: 0.75rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+}
+
+.thread-reply-ai {
+  border-color: rgba(59,130,246,0.3);
+  background: rgba(59,130,246,0.06);
+}
+
+/* ── Thread Templates Panel ── */
+.thread-templates-panel {
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.thread-templates-toggle {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #94a3b8;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.25rem 0;
+  list-style: none;
+}
+
+.thread-templates-toggle::-webkit-details-marker {
+  display: none;
+}
+
+.thread-templates-toggle::before {
+  content: '▶';
+  font-size: 0.6rem;
+  transition: transform 0.2s ease;
+}
+
+details[open] .thread-templates-toggle::before {
+  transform: rotate(90deg);
+}
+
+.thread-templates-body hr {
+  background: rgba(255,255,255,0.06);
+  margin: 0.75rem 0;
+}
+
+.thread-template-item {
+  padding: 0.5rem;
+  margin-bottom: 0.35rem;
+  background: rgba(255,255,255,0.03);
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.thread-template-item:hover {
+  background: rgba(255,255,255,0.06);
+}
+
+/* ── Responsive Post Thread ── */
+@media screen and (max-width: 768px) {
+  .post-thread-layout {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .post-list-panel {
+    height: auto;
+    max-height: 40vh;
+    border-right: none;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .post-thread-panel {
+    height: auto;
+    min-height: 50vh;
+  }
+
+  .thread-comment-nested {
+    margin-left: 1rem;
+  }
+
+  .thread-comment-actions {
+    flex-direction: column;
+  }
+
+  .thread-comment-actions .button {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}

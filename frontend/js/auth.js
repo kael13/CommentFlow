@@ -31,7 +31,7 @@ auth.onAuthStateChanged(async (user) => {
     loadSettings();
     
     // Initialize default page
-    navigate('analytics');
+    navigate('inbox');
     
     // Start autopilot polling if enabled
     initAutopilotPolling();

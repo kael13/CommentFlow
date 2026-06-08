@@ -53,6 +53,9 @@ login-scripts/config.js
 *.tmp
 *.temp
 
+# Agent instructions
+AGENTS.md
+
 # Local documentation
 documentation.md
 memory.md

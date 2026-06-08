@@ -73,6 +73,8 @@ router.post(
 );
 
 router.use("/api/comments/classify", authenticate, classifyLimiter, sanitizeInput, forwardRequest(COMMENT_SVC));
+router.use("/api/comments/posts", authenticate, commentLimiter, forwardRequest(COMMENT_SVC));
+router.use("/api/comments/thread", authenticate, commentLimiter, forwardRequest(COMMENT_SVC));
 router.use("/api/comments", authenticate, commentLimiter, sanitizeInput, forwardRequest(COMMENT_SVC));
 
 router.use("/api/leads", authenticate, leadLimiter, sanitizeInput, forwardRequest(LEAD_SVC));

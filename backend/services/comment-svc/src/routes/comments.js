@@ -6,11 +6,32 @@ import {
   updateComment,
   updateCommentReply,
   classifyAndUpdate,
+  findPosts,
+  findThreadForPost,
 } from "../handlers/commentQueries.js";
 import { classifyComment } from "../handlers/classification.js";
 import { ValidationError, NotFoundError, logger } from "@commentflow/shared";
 
 const router = Router();
+
+router.get("/posts", async (req, res, next) => {
+  try {
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit || "50", 10)));
+    const result = await findPosts(limit);
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get("/thread/:postId", async (req, res, next) => {
+  try {
+    const result = await findThreadForPost(req.params.postId);
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+});
 
 router.get("/", async (req, res, next) => {
   try {
