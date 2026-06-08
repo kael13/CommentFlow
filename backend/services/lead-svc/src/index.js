@@ -23,8 +23,8 @@ app.get("/health", (_req, res) => {
   res.json({ status: "ok", service: "lead-svc" });
 });
 
-app.use("/api/leads", leadsRouter);
 app.use("/api/leads/export", exportRouter);
+app.use("/api/leads", leadsRouter);
 
 app.use(errorMiddleware);
 

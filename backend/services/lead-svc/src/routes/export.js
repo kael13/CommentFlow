@@ -5,6 +5,10 @@ import { sendToSheets, sendToCRM } from "../handlers/notifications.js";
 
 const router = Router();
 
+router.get("/", (_req, res) => {
+  res.json({ available: ["csv", "sheets", "crm"] });
+});
+
 router.get("/csv", async (req, res, next) => {
   try {
     const { status, source, date_from, date_to } = req.query;
