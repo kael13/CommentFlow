@@ -71,71 +71,76 @@ registerPage('analytics', async function() {
   container.innerHTML = `
     <div class="columns">
       <div class="column is-12">
-        <h5><i class="fas fa-chart-bar"></i> Analytics Dashboard</h5>
-        <hr>
+        <h5 class="title is-5 mb-1"><span class="icon"><i class="fas fa-chart-bar"></i></span><span>Analytics Dashboard</span></h5>
+        <hr class="mt-2">
       </div>
-      
-      <!-- Stat Cards -->
+
       <div class="column is-3">
-        <div class="stat-card blue reveal-on-scroll">
-          <div class="stat-icon"><i class="fas fa-comments"></i></div>
-          <div class="stat-value" id="stat-total-comments">-</div>
-          <div class="stat-label">Total Comments</div>
+        <div class="box has-background-primary-light reveal-on-scroll">
+          <div class="is-flex is-justify-content-space-between is-align-items-center mb-2">
+            <span class="title is-3 mb-0 has-text-primary" id="stat-total-comments">-</span>
+            <span class="icon is-medium has-text-primary"><i class="fas fa-comments fa-lg"></i></span>
+          </div>
+          <p class="subtitle is-7 mb-0 has-text-grey">Total Comments</p>
         </div>
       </div>
       <div class="column is-3">
-        <div class="stat-card green reveal-on-scroll">
-          <div class="stat-icon"><i class="fas fa-bullseye"></i></div>
-          <div class="stat-value" id="stat-total-leads">-</div>
-          <div class="stat-label">Leads Captured</div>
+        <div class="box has-background-success-light reveal-on-scroll">
+          <div class="is-flex is-justify-content-space-between is-align-items-center mb-2">
+            <span class="title is-3 mb-0 has-text-success" id="stat-total-leads">-</span>
+            <span class="icon is-medium has-text-success"><i class="fas fa-bullseye fa-lg"></i></span>
+          </div>
+          <p class="subtitle is-7 mb-0 has-text-grey">Leads Captured</p>
         </div>
       </div>
       <div class="column is-3">
-        <div class="stat-card orange reveal-on-scroll">
-          <div class="stat-icon"><i class="fas fa-clock"></i></div>
-          <div class="stat-value" id="stat-avg-response">-</div>
-          <div class="stat-label">Avg Response Time</div>
+        <div class="box has-background-warning-light reveal-on-scroll">
+          <div class="is-flex is-justify-content-space-between is-align-items-center mb-2">
+            <span class="title is-3 mb-0 has-text-warning-dark" id="stat-avg-response">-</span>
+            <span class="icon is-medium has-text-warning-dark"><i class="fas fa-clock fa-lg"></i></span>
+          </div>
+          <p class="subtitle is-7 mb-0 has-text-grey">Avg Response Time</p>
         </div>
       </div>
       <div class="column is-3">
-        <div class="stat-card purple reveal-on-scroll">
-          <div class="stat-icon"><i class="fas fa-smile"></i></div>
-          <div class="stat-value" id="stat-sentiment">-</div>
-          <div class="stat-label">Sentiment Score</div>
+        <div class="box has-background-info-light reveal-on-scroll">
+          <div class="is-flex is-justify-content-space-between is-align-items-center mb-2">
+            <span class="title is-3 mb-0 has-text-info" id="stat-sentiment">-</span>
+            <span class="icon is-medium has-text-info"><i class="fas fa-smile fa-lg"></i></span>
+          </div>
+          <p class="subtitle is-7 mb-0 has-text-grey">Sentiment Score</p>
         </div>
       </div>
-      
-      <!-- Charts Row -->
+
       <div class="column is-8">
         <div class="box reveal-on-scroll">
-          <h6>Comments Over Time</h6>
+          <h6 class="title is-6 mb-4">Comments Over Time</h6>
           <canvas id="timeline-chart" height="250"></canvas>
         </div>
       </div>
       <div class="column is-4">
         <div class="box reveal-on-scroll">
-          <h6>Sentiment Breakdown</h6>
+          <h6 class="title is-6 mb-4">Sentiment Breakdown</h6>
           <canvas id="sentiment-chart" height="250"></canvas>
         </div>
       </div>
-      
-      <!-- More stats -->
+
       <div class="column is-6">
         <div class="box reveal-on-scroll">
-          <h6>Intent Breakdown</h6>
+          <h6 class="title is-6 mb-4">Intent Breakdown</h6>
           <canvas id="intent-chart" height="200"></canvas>
         </div>
       </div>
       <div class="column is-6">
         <div class="box reveal-on-scroll">
-          <h6>Lead Conversion</h6>
+          <h6 class="title is-6 mb-4">Lead Conversion</h6>
           <canvas id="lead-chart" height="200"></canvas>
         </div>
       </div>
-      
+
       <div class="column is-12">
         <div class="box">
-          <h6>Weekly Trend</h6>
+          <h6 class="title is-6 mb-4">Weekly Trend</h6>
           <table class="table is-hoverable is-fullwidth" id="weekly-table">
             <thead><tr><th>Day</th><th>Comments</th><th>Leads</th><th>Positive</th><th>Negative</th></tr></thead>
             <tbody id="weekly-tbody"></tbody>
@@ -162,7 +167,7 @@ registerPage('analytics', async function() {
     document.getElementById('stat-sentiment').textContent = `${score}%`;
     
     // After loading stats, animate count-up
-    const statElements = document.querySelectorAll('.stat-value');
+    const statElements = document.querySelectorAll('#stat-total-comments, #stat-total-leads, #stat-avg-response, #stat-sentiment');
     statElements.forEach(el => {
       const target = parseInt(el.textContent) || 0;
       if (target > 0 && typeof animateCountUp === 'function') {

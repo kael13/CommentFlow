@@ -23,12 +23,12 @@
       <div class="column is-10-mobile is-6-tablet is-4-desktop">
         <div class="box login-card has-text-centered">
           <img src="https://img.icons8.com/fluency/96/chat.png" alt="CommentFlow" style="width: 64px; margin-bottom: 1rem;">
-          <h2>CommentFlow</h2>
-          <p class="lead">Smart Facebook Comment Monitoring</p>
-          <button id="login-btn" class="button facebook-button is-fullwidth">
-            <i class="fab fa-facebook"></i> Sign in with Facebook
+           <h2 class="title is-4 mb-2">CommentFlow</h2>
+          <p class="subtitle is-6 has-text-grey mb-4">Smart Facebook Comment Monitoring</p>
+          <button id="login-btn" class="button is-medium facebook-button is-fullwidth">
+            <span class="icon"><i class="fab fa-facebook"></i></span> <span>Sign in with Facebook</span>
           </button>
-          <p class="text-small text-gray">Powered by Firebase Auth</p>
+          <p class="is-size-7 has-text-grey mt-3">Powered by Firebase Auth</p>
         </div>
       </div>
     </div>
@@ -98,29 +98,37 @@
     <div class="modal-background" onclick="closeModal('reply-modal')"></div>
     <div class="modal-content">
       <div class="box">
-        <h4 class="title is-5"><i class="fas fa-reply"></i> Auto Reply</h4>
-        <div id="reply-comment-preview" class="box"></div>
-        <label>Response
-          <textarea id="reply-textarea" rows="4"></textarea>
-        </label>
-        <div class="columns">
+        <h4 class="title is-5 mb-4"><span class="icon"><i class="fas fa-reply"></i></span><span>Auto Reply</span></h4>
+        <div id="reply-comment-preview" class="box has-background-light"></div>
+        <div class="field">
+          <label class="label is-size-7">Response</label>
+          <div class="control">
+            <textarea class="textarea is-small" id="reply-textarea" rows="4"></textarea>
+          </div>
+        </div>
+        <div class="columns mt-3">
           <div class="column is-4">
-            <label>Tone
-              <select id="reply-tone-select">
-                <option value="professional">Professional</option>
-                <option value="friendly">Friendly</option>
-                <option value="gen_z">Gen Z</option>
-                <option value="taglish">Taglish</option>
-              </select>
-            </label>
+            <div class="field">
+              <label class="label is-size-7">Tone</label>
+              <div class="control">
+                <div class="select is-fullwidth is-small">
+                  <select id="reply-tone-select">
+                    <option value="professional">Professional</option>
+                    <option value="friendly">Friendly</option>
+                    <option value="gen_z">Gen Z</option>
+                    <option value="taglish">Taglish</option>
+                  </select>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="column is-4">
-            <label>&nbsp;</label>
-            <button id="regenerate-reply-btn" class="button is-light is-fullwidth"><i class="fas fa-sync"></i> Regenerate</button>
+            <label class="label is-size-7">&nbsp;</label>
+            <button id="regenerate-reply-btn" class="button is-light is-small is-fullwidth"><span class="icon"><i class="fas fa-sync"></i></span><span>Regenerate</span></button>
           </div>
           <div class="column is-4">
-            <label>&nbsp;</label>
-            <button id="send-reply-btn" class="button is-primary is-fullwidth"><i class="fas fa-paper-plane"></i> Send Reply</button>
+            <label class="label is-size-7">&nbsp;</label>
+            <button id="send-reply-btn" class="button is-primary is-small is-fullwidth"><span class="icon"><i class="fas fa-paper-plane"></i></span><span>Send Reply</span></button>
           </div>
         </div>
       </div>
@@ -133,7 +141,7 @@
     <div class="modal-background" onclick="closeModal('lead-modal')"></div>
     <div class="modal-content">
       <div class="box">
-        <h4 class="title is-5"><i class="fas fa-bullseye"></i> Lead Details</h4>
+        <h4 class="title is-5 mb-4"><span class="icon"><i class="fas fa-bullseye"></i></span><span>Lead Details</span></h4>
         <div id="lead-detail-content"></div>
       </div>
     </div>

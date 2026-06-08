@@ -35,14 +35,14 @@ function debounce(fn, delay) {
 function renderPagination(containerId, totalPages, currentPage, callback) {
   const container = document.getElementById(containerId);
   if (!container || totalPages <= 1) return;
-  
-  let html = '<ul class="pagination-list">';
+
+  let html = '<nav class="pagination is-small is-centered" role="navigation"><ul class="pagination-list">';
   for (let i = 1; i <= totalPages; i++) {
     html += `<li><a class="pagination-link ${i === currentPage ? 'is-current' : ''}" href="#" data-page="${i}">${i}</a></li>`;
   }
-  html += '</ul>';
+  html += '</ul></nav>';
   container.innerHTML = html;
-  
+
   container.querySelectorAll('a[data-page]').forEach(a => {
     a.addEventListener('click', e => {
       e.preventDefault();
@@ -57,63 +57,65 @@ registerPage('moderation', async function() {
   container.innerHTML = `
     <div class="columns">
       <div class="column is-12">
-        <h5><i class="fas fa-shield-alt"></i> Moderation & Spam Control</h5>
-        <hr>
+        <h5 class="title is-5 mb-1"><span class="icon"><i class="fas fa-shield-alt"></i></span><span>Moderation & Spam Control</span></h5>
+        <hr class="mt-2">
       </div>
-      
+
       <div class="column is-8">
         <div class="box">
-          <h6>Flagged Comments Queue</h6>
-          <div class="field has-addons">
-            <div class="control is-expanded">
-              <span class="select is-fullwidth">
+          <h6 class="title is-6 mb-4">Flagged Comments Queue</h6>
+          <div class="field has-addons mb-4">
+            <div class="control">
+              <div class="select is-small">
                 <select id="mod-status-filter">
                   <option value="flagged">Flagged</option>
                   <option value="pending">Pending</option>
                   <option value="all">All</option>
                 </select>
-              </span>
+              </div>
             </div>
             <div class="control">
-              <button class="button is-light" id="mod-refresh-btn"><i class="fas fa-sync"></i> Refresh</button>
+              <button class="button is-light is-small" id="mod-refresh-btn"><span class="icon"><i class="fas fa-sync"></i></span><span>Refresh</span></button>
             </div>
           </div>
           <div id="flagged-comments-list">
-            <div class="has-text-centered loading-spinner"><i class="fas fa-spinner fa-spin"></i></div>
+            <div class="has-text-centered py-4 has-text-grey"><span class="icon"><i class="fas fa-spinner fa-pulse"></i></span></div>
           </div>
         </div>
-        
+
         <div class="box">
-          <h6>Moderation Log</h6>
-          <div class="moderation-log" id="moderation-log" style="max-height: 200px; overflow-y: auto;">
-            <div class="has-text-centered loading-spinner"><i class="fas fa-spinner fa-spin"></i></div>
+          <h6 class="title is-6 mb-4">Moderation Log</h6>
+          <div id="moderation-log" style="max-height:200px;overflow-y:auto;">
+            <div class="has-text-centered py-4 has-text-grey"><span class="icon"><i class="fas fa-spinner fa-pulse"></i></span></div>
           </div>
         </div>
       </div>
-      
+
       <div class="column is-4">
         <div class="box">
-          <h6>Blocked Keywords</h6>
-          <div class="field has-addons">
+          <h6 class="title is-6 mb-4">Blocked Keywords</h6>
+          <div class="field has-addons mb-4">
             <div class="control is-expanded">
-              <input class="input" type="text" id="new-keyword" placeholder="Add keyword...">
+              <input class="input is-small" type="text" id="new-keyword" placeholder="Add keyword...">
             </div>
             <div class="control">
-              <button class="button is-primary" id="add-keyword-btn"><i class="fas fa-plus"></i></button>
+              <button class="button is-primary is-small" id="add-keyword-btn"><span class="icon"><i class="fas fa-plus"></i></span></button>
             </div>
           </div>
           <div id="keyword-list">
-            <div class="has-text-centered loading-spinner"><i class="fas fa-spinner fa-spin"></i></div>
+            <div class="has-text-centered py-4 has-text-grey"><span class="icon"><i class="fas fa-spinner fa-pulse"></i></span></div>
           </div>
         </div>
-        
+
         <div class="box">
-          <h6>Troll Detection</h6>
-          <label class="toggle-switch">
-            <input type="checkbox" id="troll-detection-toggle" checked>
-            <span class="toggle-slider"></span>
+          <h6 class="title is-6 mb-4">Troll Detection</h6>
+          <label class="is-flex is-align-items-center is-justify-content-space-between">
+            <span class="is-size-7 has-text-grey">Auto-flag repeated offenders</span>
+            <span class="toggle-switch ml-2">
+              <input type="checkbox" id="troll-detection-toggle" checked>
+              <span class="toggle-slider"></span>
+            </span>
           </label>
-          <p class="is-size-7 has-text-grey">Auto-flag repeated offenders</p>
         </div>
       </div>
     </div>
@@ -145,21 +147,18 @@ async function loadFlaggedComments() {
     }
     
     list.innerHTML = comments.map(c => `
-      <div class="box moderation-item ${c.moderation_status}">
-        <div class="columns is-vcentered">
-          <div class="column">
-            <strong>${escapeHtml(c.author_name)}</strong>
-            <span class="is-size-7 has-text-grey">${timeAgo(c.timestamp)}</span>
-            <p class="mod-text">${escapeHtml(truncate(c.text, 150))}</p>
-          </div>
-          <div class="column is-narrow">
-            <div class="buttons has-addons are-small">
-              <button class="button is-success" onclick="approveComment('${c.id}')"><i class="fas fa-check"></i> Approve</button>
-              <button class="button is-danger" onclick="hideModComment('${c.id}')"><i class="fas fa-eye-slash"></i> Hide</button>
-              <button class="button is-warning" onclick="blockUser('${c.id}')"><i class="fas fa-ban"></i> Block</button>
+      <div class="box mb-2">
+        <article class="media">
+          <div class="media-content">
+            <p class="mb-1"><strong>${escapeHtml(c.author_name)}</strong> <small class="has-text-grey">${timeAgo(c.timestamp)}</small></p>
+            <p class="is-size-7 mb-2">${escapeHtml(truncate(c.text, 150))}</p>
+            <div class="buttons are-small">
+              <button class="button is-small is-success" onclick="approveComment('${c.id}')"><span class="icon"><i class="fas fa-check"></i></span><span>Approve</span></button>
+              <button class="button is-small is-danger" onclick="hideModComment('${c.id}')"><span class="icon"><i class="fas fa-eye-slash"></i></span><span>Hide</span></button>
+              <button class="button is-small is-warning" onclick="blockUser('${c.id}')"><span class="icon"><i class="fas fa-ban"></i></span><span>Block</span></button>
             </div>
           </div>
-        </div>
+        </article>
       </div>
     `).join('');
   } catch(e) {
@@ -174,14 +173,14 @@ async function loadKeywords() {
     
     const list = document.getElementById('keyword-list');
     list.innerHTML = keywords.map(k => `
-      <div class="keyword-chip">
-        <span>${escapeHtml(k.keyword)}</span>
-        <div class="keyword-actions">
-          <label class="toggle-switch">
+      <div class="is-flex is-align-items-center is-justify-content-space-between py-2" style="border-bottom:1px solid #f0f0f0;">
+        <span class="tag is-medium">${escapeHtml(k.keyword)}</span>
+        <div class="is-flex is-align-items-center" style="gap:0.5rem;">
+          <span class="toggle-switch is-small">
             <input type="checkbox" ${k.is_active ? 'checked' : ''} onchange="toggleKeyword('${k.id}', this.checked)">
             <span class="toggle-slider"></span>
-          </label>
-          <button class="button is-small is-danger" onclick="removeKeyword('${k.id}')"><i class="fas fa-times"></i></button>
+          </span>
+          <button class="delete is-small" onclick="removeKeyword('${k.id}')"></button>
         </div>
       </div>
     `).join('');
@@ -195,12 +194,15 @@ async function loadModerationLog() {
     
     const logEl = document.getElementById('moderation-log');
     logEl.innerHTML = logs.map(l => `
-      <div class="log-entry">
-        <span class="is-size-7 has-text-grey">${timeAgo(l.timestamp)}</span>
-        <span>${escapeHtml(l.details?.action || l.action_type)}</span>
-        <span class="tag ${l.details?.status === 'hidden' ? 'is-danger' : 'is-success'}">${l.details?.status || 'done'}</span>
-      </div>
-    `).join('') || '<p class="has-text-centered has-text-grey">No moderation actions yet</p>';
+      <article class="media is-align-items-center py-2" style="border-bottom:1px solid #f0f0f0;">
+        <div class="media-content">
+          <p class="is-size-7 mb-1"><small class="has-text-grey">${timeAgo(l.timestamp)}</small> &mdash; ${escapeHtml(l.details?.action || l.action_type)}</p>
+        </div>
+        <div class="media-right">
+          <span class="tag ${l.details?.status === 'hidden' ? 'is-danger' : 'is-success'} is-small">${l.details?.status || 'done'}</span>
+        </div>
+      </article>
+    `).join('') || '<p class="has-text-centered has-text-grey py-3">No moderation actions yet</p>';
   } catch(e) {}
 }
 

@@ -62,37 +62,39 @@ registerPage('leads', async function() {
   container.innerHTML = `
     <div class="columns">
       <div class="column is-12">
-        <h5><i class="fas fa-bullseye"></i> Lead Capture</h5>
-        <hr>
+        <h5 class="title is-5 mb-1"><span class="icon"><i class="fas fa-bullseye"></i></span><span>Lead Capture</span></h5>
+        <hr class="mt-2">
       </div>
       <div class="column is-12">
         <div class="box">
-          <div class="columns align-middle">
+          <div class="columns is-vcentered">
             <div class="column is-4">
               <div class="field has-addons">
                 <div class="control is-expanded">
-                  <input class="input" type="search" id="leads-search" placeholder="Search leads...">
+                  <input class="input is-small" type="search" id="leads-search" placeholder="Search leads...">
                 </div>
               </div>
             </div>
             <div class="column is-2">
-              <select id="leads-status-filter">
-                <option value="">All Status</option>
-                <option value="new">New</option>
-                <option value="contacted">Contacted</option>
-                <option value="converted">Converted</option>
-                <option value="closed">Closed</option>
-              </select>
+              <div class="select is-small is-fullwidth">
+                <select id="leads-status-filter">
+                  <option value="">All Status</option>
+                  <option value="new">New</option>
+                  <option value="contacted">Contacted</option>
+                  <option value="converted">Converted</option>
+                  <option value="closed">Closed</option>
+                </select>
+              </div>
             </div>
             <div class="column is-3">
-              <button class="button is-light" id="export-csv-btn"><i class="fas fa-file-csv"></i> Export CSV</button>
-              <button class="button is-light" id="export-sheets-btn"><i class="fas fa-table"></i> Google Sheets</button>
+              <button class="button is-small is-light mr-1" id="export-csv-btn"><span class="icon"><i class="fas fa-file-csv"></i></span><span>CSV</span></button>
+              <button class="button is-small is-light" id="export-sheets-btn"><span class="icon"><i class="fas fa-table"></i></span><span>Sheets</span></button>
             </div>
             <div class="column is-3">
-              <div class="stat lead-stats" id="lead-stats-bar">
-                <span class="stat-new">New: 0</span>
-                <span class="stat-contacted">Contacted: 0</span>
-                <span class="stat-converted">Converted: 0</span>
+              <div class="tags" id="lead-stats-bar">
+                <span class="tag is-info is-light">New: <strong id="lead-stat-new">0</strong></span>
+                <span class="tag is-warning is-light">Contacted: <strong id="lead-stat-contacted">0</strong></span>
+                <span class="tag is-success is-light">Converted: <strong id="lead-stat-converted">0</strong></span>
               </div>
             </div>
           </div>
@@ -151,9 +153,9 @@ registerPage('leads', async function() {
       
       // Update stats
       const stats = data.stats || {};
-      document.querySelector('.stat-new').textContent = `New: ${stats.new || 0}`;
-      document.querySelector('.stat-contacted').textContent = `Contacted: ${stats.contacted || 0}`;
-      document.querySelector('.stat-converted').textContent = `Converted: ${stats.converted || 0}`;
+      document.getElementById('lead-stat-new').textContent = stats.new || 0;
+      document.getElementById('lead-stat-contacted').textContent = stats.contacted || 0;
+      document.getElementById('lead-stat-converted').textContent = stats.converted || 0;
       
       // Pagination
       const totalPages = Math.ceil((data.total || 0) / 20);
@@ -180,14 +182,17 @@ registerPage('leads', async function() {
 function viewLead(id) {
   api.get(`/leads/${id}`).then(lead => {
     document.getElementById('lead-detail-content').innerHTML = `
-      <p><strong>Name:</strong> ${escapeHtml(lead.name)}</p>
-      <p><strong>Product Interest:</strong> ${escapeHtml(lead.product_interest || '-')}</p>
-      <p><strong>Status:</strong> <span class="tag lead-status-${lead.status}">${lead.status}</span></p>
-      <p><strong>Captured:</strong> ${timeAgo(lead.captured_at)}</p>
-      ${lead.notes ? `<p><strong>Notes:</strong> ${escapeHtml(lead.notes)}</p>` : ''}
-      <hr>
-      <button class="button is-small is-success" onclick="updateLeadStatus('${lead.id}','contacted');closeModal('lead-modal')"><i class="fas fa-check"></i> Mark Contacted</button>
-      <button class="button is-small is-warning" onclick="updateLeadStatus('${lead.id}','converted');closeModal('lead-modal')"><i class="fas fa-trophy"></i> Mark Converted</button>
+      <div class="content">
+        <p><strong>Name:</strong> ${escapeHtml(lead.name)}</p>
+        <p><strong>Product Interest:</strong> ${escapeHtml(lead.product_interest || '-')}</p>
+        <p><strong>Status:</strong> <span class="tag lead-status-${lead.status}">${lead.status}</span></p>
+        <p><strong>Captured:</strong> ${timeAgo(lead.captured_at)}</p>
+        ${lead.notes ? `<p><strong>Notes:</strong> ${escapeHtml(lead.notes)}</p>` : ''}
+      </div>
+      <div class="buttons mt-3">
+        <button class="button is-small is-success" onclick="updateLeadStatus('${lead.id}','contacted');closeModal('lead-modal')"><span class="icon"><i class="fas fa-check"></i></span><span>Mark Contacted</span></button>
+        <button class="button is-small is-warning" onclick="updateLeadStatus('${lead.id}','converted');closeModal('lead-modal')"><span class="icon"><i class="fas fa-trophy"></i></span><span>Mark Converted</span></button>
+      </div>
     `;
     openModal('lead-modal');
   }).catch(() => showToast('Failed to load lead', 'alert'));

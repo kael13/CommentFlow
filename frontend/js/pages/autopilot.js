@@ -4,61 +4,61 @@ registerPage('autopilot', async function() {
   container.innerHTML = `
     <div class="columns">
       <div class="column is-12">
-        <h5><i class="fas fa-microchip"></i> Autopilot Mode</h5>
-        <hr>
+        <h5 class="title is-5 mb-1"><span class="icon"><i class="fas fa-microchip"></i></span><span>Autopilot Mode</span></h5>
+        <hr class="mt-2">
       </div>
-      
+
       <div class="column is-4">
-        <div class="box autopilot-status-card" id="autopilot-status-card">
-          <div class="columns is-vcentered">
-            <div class="column is-narrow">
-              <div class="autopilot-indicator" id="autopilot-indicator">&#9679;</div>
+        <div class="box" id="autopilot-status-card">
+          <article class="media">
+            <div class="media-left">
+              <span class="icon is-large" id="autopilot-indicator">&#9679;</span>
             </div>
-            <div class="column">
-              <h6>Autopilot Status</h6>
-              <p class="autopilot-status-text" id="autopilot-status-text">Checking...</p>
+            <div class="media-content">
+              <h6 class="title is-6 mb-1">Autopilot Status</h6>
+              <p class="is-size-7" id="autopilot-status-text">Checking...</p>
             </div>
-          </div>
+          </article>
         </div>
-        
+
         <div class="box reveal-on-scroll">
-          <h6>Autopilot Stats</h6>
-          <div class="stat-row">
-            <span>AI Replies Sent</span>
+          <h6 class="title is-6 mb-4">Autopilot Stats</h6>
+          <div class="is-flex is-justify-content-space-between py-2" style="border-bottom:1px solid #f0f0f0;">
+            <span class="is-size-7">AI Replies Sent</span>
             <strong id="auto-stats-replies">0</strong>
           </div>
-          <div class="stat-row">
-            <span>Leads Captured</span>
+          <div class="is-flex is-justify-content-space-between py-2" style="border-bottom:1px solid #f0f0f0;">
+            <span class="is-size-7">Leads Captured</span>
             <strong id="auto-stats-leads">0</strong>
           </div>
-          <div class="stat-row">
-            <span>Spam Hidden</span>
+          <div class="is-flex is-justify-content-space-between py-2" style="border-bottom:1px solid #f0f0f0;">
+            <span class="is-size-7">Spam Hidden</span>
             <strong id="auto-stats-spam">0</strong>
           </div>
-          <div class="stat-row">
-            <span>Comments Classified</span>
+          <div class="is-flex is-justify-content-space-between py-2">
+            <span class="is-size-7">Comments Classified</span>
             <strong id="auto-stats-classified">0</strong>
           </div>
         </div>
-        
+
         <div class="box">
-          <h6>What Autopilot Does</h6>
-          <ul class="is-size-7">
-            <li>&#10003; Classifies every new comment</li>
-            <li>&#10003; Replies to questions &amp; leads</li>
-            <li>&#10003; Captures leads automatically</li>
-            <li>&#10003; Hides spam &amp; toxic content</li>
-            <li>&#10003; Sends notifications</li>
-            <li>&#10003; Tracks viral engagement</li>
+          <h6 class="title is-6 mb-3">What Autopilot Does</h6>
+          <ul class="is-size-7 ml-4" style="list-style:disc;">
+            <li>Classifies every new comment</li>
+            <li>Replies to questions &amp; leads</li>
+            <li>Captures leads automatically</li>
+            <li>Hides spam &amp; toxic content</li>
+            <li>Sends notifications</li>
+            <li>Tracks viral engagement</li>
           </ul>
         </div>
       </div>
-      
+
       <div class="column is-8">
         <div class="box">
-          <h6><i class="fas fa-stream"></i> Real-time Activity Log</h6>
-          <div class="activity-feed" id="activity-feed">
-            <div class="has-text-centered loading-spinner"><i class="fas fa-spinner fa-spin"></i></div>
+          <h6 class="title is-6 mb-4"><span class="icon"><i class="fas fa-stream"></i></span><span>Real-time Activity Log</span></h6>
+          <div id="activity-feed">
+            <div class="has-text-centered py-4 has-text-grey"><span class="icon"><i class="fas fa-spinner fa-pulse"></i></span></div>
           </div>
         </div>
       </div>
@@ -87,7 +87,7 @@ async function loadActivityLog() {
     
     const feed = document.getElementById('activity-feed');
     if (logs.length === 0) {
-      feed.innerHTML = '<p class="has-text-centered has-text-grey"><i class="fas fa-clock fa-2x" style="opacity:0.3;"></i><br>No activity yet. Enable Autopilot to see actions.</p>';
+      feed.innerHTML = '<div class="has-text-centered has-text-grey py-6"><span class="icon is-large has-text-grey-lighter"><i class="fas fa-clock fa-2x"></i></span><p class="mt-2">No activity yet. Enable Autopilot to see actions.</p></div>';
       return;
     }
     
@@ -95,19 +95,21 @@ async function loadActivityLog() {
       const icon = getActionIcon(l.action_type);
       const label = getActionLabel(l.action_type);
       const status = l.details?.status || 'completed';
-      
+
       return `
-        <div class="activity-entry ${status} reveal-on-scroll">
-          <div class="activity-icon">${icon}</div>
-          <div class="activity-content">
-            <div class="activity-action">${label}</div>
-            <div class="activity-detail">${escapeHtml(l.details?.text || JSON.stringify(l.details || ''))}</div>
-            <div class="activity-meta">
-              <span class="is-size-7 has-text-grey">${timeAgo(l.timestamp)}</span>
-              <span class="tag ${status === 'completed' ? 'is-success' : status === 'failed' ? 'is-danger' : 'is-warning'}">${status}</span>
-            </div>
+        <article class="media reveal-on-scroll py-2" style="border-bottom:1px solid #f0f0f0;">
+          <div class="media-left">
+            <span class="icon is-small">${icon}</span>
           </div>
-        </div>
+          <div class="media-content">
+            <p class="is-size-7 mb-1"><strong>${label}</strong></p>
+            <p class="is-size-7 has-text-grey mb-1">${escapeHtml(l.details?.text || JSON.stringify(l.details || ''))}</p>
+            <p class="is-size-7">
+              <small class="has-text-grey">${timeAgo(l.timestamp)}</small>
+              <span class="tag ${status === 'completed' ? 'is-success' : status === 'failed' ? 'is-danger' : 'is-warning'} is-small ml-2">${status}</span>
+            </p>
+          </div>
+        </article>
       `;
     }).join('');
     
@@ -119,19 +121,19 @@ async function updateAutopilotStatus() {
   try {
     const s = await api.get('/settings');
     const enabled = s.autopilot_enabled;
-    
+
     const indicator = document.getElementById('autopilot-indicator');
     const text = document.getElementById('autopilot-status-text');
     const card = document.getElementById('autopilot-status-card');
-    
+
     if (enabled) {
-      indicator.className = 'autopilot-indicator active pulse';
-      text.textContent = 'Autopilot is RUNNING &mdash; AI handling comments automatically';
-      card.className = 'box autopilot-status-card notification is-success';
+      indicator.className = 'icon is-large has-text-success is-pulsing';
+      text.textContent = 'Autopilot is RUNNING — AI handling comments automatically';
+      card.className = 'box has-background-success-light';
     } else {
-      indicator.className = 'autopilot-indicator';
-      text.textContent = 'Autopilot is OFF &mdash; Enable from the top bar toggle';
-      card.className = 'box autopilot-status-card notification is-warning';
+      indicator.className = 'icon is-large has-text-grey';
+      text.textContent = 'Autopilot is OFF — Enable from the top bar toggle';
+      card.className = 'box has-background-warning-light';
     }
   } catch(e) {}
 }
@@ -150,15 +152,15 @@ async function loadAutopilotStats() {
 
 function getActionIcon(type) {
   const icons = {
-    'reply': '<i class="fas fa-reply" style="color:#1779ba;"></i>',
-    'classify': '<i class="fas fa-tag" style="color:#3adb76;"></i>',
-    'moderate': '<i class="fas fa-shield-alt" style="color:#ffae00;"></i>',
-    'lead_capture': '<i class="fas fa-bullseye" style="color:#3adb76;"></i>',
-    'autopilot': '<i class="fas fa-microchip" style="color:#1779ba;"></i>',
-    'login': '<i class="fas fa-sign-in-alt" style="color:#767676;"></i>',
-    'settings_change': '<i class="fas fa-cog" style="color:#767676;"></i>',
+    'reply': '<i class="fas fa-reply has-text-primary"></i>',
+    'classify': '<i class="fas fa-tag has-text-success"></i>',
+    'moderate': '<i class="fas fa-shield-alt has-text-warning"></i>',
+    'lead_capture': '<i class="fas fa-bullseye has-text-success"></i>',
+    'autopilot': '<i class="fas fa-microchip has-text-primary"></i>',
+    'login': '<i class="fas fa-sign-in-alt has-text-grey"></i>',
+    'settings_change': '<i class="fas fa-cog has-text-grey"></i>',
   };
-  return icons[type] || '<i class="fas fa-circle" style="color:#767676;"></i>';
+  return icons[type] || '<i class="fas fa-circle has-text-grey"></i>';
 }
 
 function getActionLabel(type) {

@@ -40,14 +40,14 @@ function debounce(fn, delay) {
 function renderPagination(containerId, totalPages, currentPage, callback) {
   const container = document.getElementById(containerId);
   if (!container || totalPages <= 1) return;
-  
-  let html = '<ul class="pagination">';
+
+  let html = '<nav class="pagination is-small is-centered" role="navigation"><ul class="pagination-list">';
   for (let i = 1; i <= totalPages; i++) {
-    html += `<li class="${i === currentPage ? 'current' : ''}"><a href="#" data-page="${i}">${i}</a></li>`;
+    html += `<li><a class="pagination-link ${i === currentPage ? 'is-current' : ''}" data-page="${i}">${i}</a></li>`;
   }
-  html += '</ul>';
+  html += '</ul></nav>';
   container.innerHTML = html;
-  
+
   container.querySelectorAll('a[data-page]').forEach(a => {
     a.addEventListener('click', e => {
       e.preventDefault();
@@ -61,33 +61,33 @@ registerPage('inbox', async function() {
   const container = document.getElementById('page-inbox');
   
   container.innerHTML = `
-    <div class="columns inbox-layout">
+    <div class="columns is-gapless inbox-layout">
       <div class="column is-5 inbox-threads">
-        <div class="inbox-header">
-          <h5><i class="fas fa-inbox"></i> Comment Inbox</h5>
-          <div class="field has-addons">
+        <div class="inbox-header p-4">
+          <h5 class="title is-5 mb-3"><span class="icon-text"><span class="icon"><i class="fas fa-inbox"></i></span><span>Comment Inbox</span></span></h5>
+          <div class="field has-addons mb-3">
             <div class="control is-expanded">
-              <input class="input" type="search" id="inbox-search" placeholder="Search comments...">
+              <input class="input is-small" type="search" id="inbox-search" placeholder="Search comments...">
             </div>
             <div class="control">
-              <button class="button is-light" id="inbox-filter-btn"><i class="fas fa-filter"></i></button>
+              <button class="button is-small is-light" id="inbox-filter-btn"><span class="icon"><i class="fas fa-filter"></i></span></button>
             </div>
           </div>
-          <div class="inbox-tabs buttons has-addons">
-            <button class="button is-active is-small is-fullwidth" data-filter="all">All</button>
-            <button class="button is-small is-fullwidth" data-filter="lead">Leads</button>
-            <button class="button is-small is-fullwidth" data-filter="question">Questions</button>
-            <button class="button is-small is-fullwidth" data-filter="spam">Spam</button>
+          <div class="buttons has-addons is-fullwidth">
+            <button class="button is-small is-active is-flex-grow-1" data-filter="all">All</button>
+            <button class="button is-small is-flex-grow-1" data-filter="lead">Leads</button>
+            <button class="button is-small is-flex-grow-1" data-filter="question">Questions</button>
+            <button class="button is-small is-flex-grow-1" data-filter="spam">Spam</button>
           </div>
         </div>
         <div class="inbox-thread-list" id="inbox-thread-list">
-          <div class="has-text-centered loading-spinner"><i class="fas fa-spinner fa-spin fa-2x"></i></div>
+          <div class="has-text-centered py-6 has-text-grey"><span class="icon is-large"><i class="fas fa-spinner fa-pulse fa-2x"></i></span></div>
         </div>
       </div>
       <div class="column is-7 inbox-detail">
-        <div class="inbox-detail-empty has-text-centered" style="padding: 40px;">
-          <i class="fas fa-comment-dots fa-4x" style="color: #ccc;"></i>
-          <p class="subtitle" style="color: #999;">Select a comment to view details</p>
+        <div class="inbox-detail-empty has-text-centered py-6">
+          <span class="icon is-large has-text-grey-lighter"><i class="fas fa-comment-dots fa-4x"></i></span>
+          <p class="subtitle is-6 has-text-grey mt-4">Select a comment to view details</p>
         </div>
         <div class="inbox-detail-content" id="inbox-detail-content" style="display: none;"></div>
       </div>
@@ -101,10 +101,10 @@ registerPage('inbox', async function() {
   document.getElementById('inbox-search').addEventListener('input', debounce(() => loadInboxComments(), 300));
   
   // Filter tabs
-  document.querySelectorAll('.inbox-tabs .button').forEach(btn => {
+  document.querySelectorAll('#page-inbox .buttons.has-addons .button').forEach(btn => {
     btn.addEventListener('click', function() {
-      document.querySelectorAll('.inbox-tabs .button').forEach(b => b.classList.remove('active'));
-      this.classList.add('active');
+      document.querySelectorAll('#page-inbox .buttons.has-addons .button').forEach(b => b.classList.remove('is-active'));
+      this.classList.add('is-active');
       loadInboxComments();
     });
   });
@@ -113,7 +113,7 @@ registerPage('inbox', async function() {
 let currentComments = [];
 
 async function loadInboxComments() {
-  const filter = document.querySelector('.inbox-tabs .button.active')?.dataset?.filter || 'all';
+  const filter = document.querySelector('#page-inbox .buttons.has-addons .button.is-active')?.dataset?.filter || 'all';
   const search = document.getElementById('inbox-search')?.value || '';
   
   try {
@@ -133,29 +133,35 @@ function renderThreadList(comments) {
   const list = document.getElementById('inbox-thread-list');
   
   if (comments.length === 0) {
-    list.innerHTML = '<div class="has-text-centered" style="padding: 30px;color:#999;"><i class="fas fa-inbox fa-3x"></i><p>No comments yet</p></div>';
+    list.innerHTML = '<div class="has-text-centered has-text-grey py-6"><span class="icon is-large"><i class="fas fa-inbox fa-2x"></i></span><p class="mt-2">No comments yet</p></div>';
     return;
   }
   
   list.innerHTML = comments.map(c => `
-    <div class="media-object comment-thread" data-id="${c.id}" onclick="selectComment('${c.id}')">
-      <div class="media-object-section">
-        <img src="https://graph.facebook.com/${c.author_fb_id || 'default'}/picture?type=square" alt="" class="avatar" onerror="this.src='https://via.placeholder.com/40'">
-      </div>
-      <div class="media-object-section main-section">
-        <div class="comment-thread-header">
-          <strong>${escapeHtml(c.author_name)}</strong>
-          <span class="is-size-7 has-text-grey">${timeAgo(c.timestamp)}</span>
+    <article class="media comment-thread" data-id="${c.id}" onclick="selectComment('${c.id}')">
+      <figure class="media-left">
+        <p class="image is-40x40">
+          <img class="is-rounded" src="https://graph.facebook.com/${c.author_fb_id || 'default'}/picture?type=square" alt="" onerror="this.src='https://via.placeholder.com/40'">
+        </p>
+      </figure>
+      <div class="media-content">
+        <div class="content">
+          <p class="mb-1">
+            <strong>${escapeHtml(c.author_name)}</strong>
+            <small class="has-text-grey ml-2">${timeAgo(c.timestamp)}</small>
+          </p>
+          <p class="is-size-7 has-text-grey mb-1">${escapeHtml(truncate(c.text, 80))}</p>
         </div>
-        <div class="comment-thread-preview">${escapeHtml(truncate(c.text, 80))}</div>
-        <div class="comment-thread-meta">
-          ${c.ai_intent ? `<span class="tag intent-${c.ai_intent}">${c.ai_intent}</span>` : ''}
-          ${c.is_lead ? '<span class="tag is-success">Lead</span>' : ''}
-          ${c.moderation_status === 'flagged' ? '<span class="tag is-warning">Flagged</span>' : ''}
-          <span class="is-size-7 has-text-grey"><i class="fas fa-heart"></i> ${c.like_count || 0}</span>
-        </div>
+        <nav class="level is-mobile">
+          <div class="level-left">
+            ${c.ai_intent ? `<span class="tag intent-${c.ai_intent} is-size-7">${c.ai_intent}</span>` : ''}
+            ${c.is_lead ? '<span class="tag is-success is-size-7 ml-1">Lead</span>' : ''}
+            ${c.moderation_status === 'flagged' ? '<span class="tag is-warning is-size-7 ml-1">Flagged</span>' : ''}
+            <span class="is-size-7 has-text-grey ml-2"><span class="icon is-small"><i class="fas fa-heart"></i></span>${c.like_count || 0}</span>
+          </div>
+        </nav>
       </div>
-    </div>
+    </article>
   `).join('');
 }
 
@@ -164,8 +170,8 @@ function selectComment(id) {
   if (!comment) return;
   
   // Highlight selected
-  document.querySelectorAll('.comment-thread').forEach(el => el.classList.remove('selected'));
-  document.querySelector(`.comment-thread[data-id="${id}"]`)?.classList.add('selected');
+  document.querySelectorAll('.comment-thread').forEach(el => el.classList.remove('is-active'));
+  document.querySelector(`.comment-thread[data-id="${id}"]`)?.classList.add('is-active');
   
   renderCommentDetail(comment);
 }
@@ -178,37 +184,36 @@ function renderCommentDetail(comment) {
   detail.style.display = 'block';
   
   detail.innerHTML = `
-    <div class="comment-detail-card">
-      <div class="columns is-vcentered">
-        <div class="column is-1">
-          <img src="https://graph.facebook.com/${comment.author_fb_id || 'default'}/picture?type=square" alt="" class="avatar" style="width:48px;height:48px;" onerror="this.src='https://via.placeholder.com/48'">
-        </div>
-        <div class="column is-11">
-          <strong>${escapeHtml(comment.author_name)}</strong>
-          <span class="is-size-7 has-text-grey">${timeAgo(comment.timestamp)}</span>
-          <div class="comment-tags" style="margin-top: 4px;">
-            ${comment.ai_intent ? `<span class="tag intent-${comment.ai_intent}">${comment.ai_intent}</span>` : ''}
-            ${comment.sentiment ? `<span class="tag sentiment-${comment.sentiment}">${comment.sentiment}</span>` : ''}
-            ${comment.is_lead ? '<span class="tag is-success"><i class="fas fa-bolt"></i> Lead</span>' : ''}
-            ${comment.viral_score > 5 ? `<span class="tag is-danger"><i class="fas fa-fire"></i> Viral</span>` : ''}
+    <div class="box comment-detail-card">
+      <article class="media">
+        <figure class="media-left">
+          <p class="image is-48x48">
+            <img class="is-rounded" src="https://graph.facebook.com/${comment.author_fb_id || 'default'}/picture?type=square" alt="" onerror="this.src='https://via.placeholder.com/48'">
+          </p>
+        </figure>
+        <div class="media-content">
+          <p><strong>${escapeHtml(comment.author_name)}</strong> <small class="has-text-grey">${timeAgo(comment.timestamp)}</small></p>
+          <div class="tags mt-2">
+            ${comment.ai_intent ? `<span class="tag intent-${comment.ai_intent} is-size-7">${comment.ai_intent}</span>` : ''}
+            ${comment.sentiment ? `<span class="tag sentiment-${comment.sentiment} is-size-7">${comment.sentiment}</span>` : ''}
+            ${comment.is_lead ? '<span class="tag is-success is-size-7"><span class="icon is-small"><i class="fas fa-bolt"></i></span><span>Lead</span></span>' : ''}
+            ${comment.viral_score > 5 ? '<span class="tag is-danger is-size-7"><span class="icon is-small"><i class="fas fa-fire"></i></span><span>Viral</span></span>' : ''}
           </div>
         </div>
+      </article>
+      <div class="content mt-4">
+        <p>${escapeHtml(comment.text)}</p>
       </div>
-      <hr>
-      <div class="comment-text">${escapeHtml(comment.text)}</div>
-      <hr>
-      <div class="comment-actions buttons has-addons">
-        <button class="button is-small is-primary" onclick="openReplyModal('${comment.id}')"><i class="fas fa-reply"></i> Reply</button>
-        <button class="button is-small is-light" onclick="classifyComment('${comment.id}')"><i class="fas fa-tag"></i> Classify</button>
-        <button class="button is-small is-warning" onclick="flagComment('${comment.id}')"><i class="fas fa-flag"></i> Flag</button>
-        <button class="button is-small is-danger" onclick="hideComment('${comment.id}')"><i class="fas fa-eye-slash"></i> Hide</button>
+      <div class="buttons mt-3">
+        <button class="button is-small is-primary" onclick="openReplyModal('${comment.id}')"><span class="icon"><i class="fas fa-reply"></i></span><span>Reply</span></button>
+        <button class="button is-small is-light" onclick="classifyComment('${comment.id}')"><span class="icon"><i class="fas fa-tag"></i></span><span>Classify</span></button>
+        <button class="button is-small is-warning" onclick="flagComment('${comment.id}')"><span class="icon"><i class="fas fa-flag"></i></span><span>Flag</span></button>
+        <button class="button is-small is-danger" onclick="hideComment('${comment.id}')"><span class="icon"><i class="fas fa-eye-slash"></i></span><span>Hide</span></button>
       </div>
-      
       ${comment.reply_text ? `
-        <div class="box reply-display">
-          <strong><i class="fas fa-reply"></i> AI Reply</strong>
-          <span class="tag ${comment.auto_replied ? 'is-success' : 'is-light'}">${comment.auto_replied ? 'Auto' : 'Manual'}</span>
-          <p style="margin-top: 8px;">${escapeHtml(comment.reply_text)}</p>
+        <div class="box has-background-light mt-4">
+          <p class="mb-2"><strong><span class="icon"><i class="fas fa-reply"></i></span><span>AI Reply</span></strong> <span class="tag ${comment.auto_replied ? 'is-success' : 'is-light'} ml-2">${comment.auto_replied ? 'Auto' : 'Manual'}</span></p>
+          <p>${escapeHtml(comment.reply_text)}</p>
         </div>
       ` : ''}
     </div>

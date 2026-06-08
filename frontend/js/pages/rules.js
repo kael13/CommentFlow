@@ -35,14 +35,14 @@ function debounce(fn, delay) {
 function renderPagination(containerId, totalPages, currentPage, callback) {
   const container = document.getElementById(containerId);
   if (!container || totalPages <= 1) return;
-  
-  let html = '<ul class="pagination-list">';
+
+  let html = '<nav class="pagination is-small is-centered" role="navigation"><ul class="pagination-list">';
   for (let i = 1; i <= totalPages; i++) {
     html += `<li><a class="pagination-link ${i === currentPage ? 'is-current' : ''}" href="#" data-page="${i}">${i}</a></li>`;
   }
-  html += '</ul>';
+  html += '</ul></nav>';
   container.innerHTML = html;
-  
+
   container.querySelectorAll('a[data-page]').forEach(a => {
     a.addEventListener('click', e => {
       e.preventDefault();
@@ -65,104 +65,95 @@ registerPage('rules', async function() {
   container.innerHTML = `
     <div class="columns">
       <div class="column is-12">
-        <h5><i class="fas fa-sliders-h"></i> AI Rules & Control Panel</h5>
-        <hr>
+        <h5 class="title is-5 mb-1"><span class="icon"><i class="fas fa-sliders-h"></i></span><span>AI Rules & Control Panel</span></h5>
+        <hr class="mt-2">
       </div>
-      
+
       <div class="column is-6">
-        <div class="box rules-card">
-          <h6><i class="fas fa-robot"></i> Reply Tone</h6>
-          <p class="is-size-7 has-text-grey">How should AI replies sound?</p>
-          <div class="buttons has-addons is-fullwidth" id="tone-selector">
-            <button class="button" data-value="professional"><i class="fas fa-briefcase"></i> Professional</button>
-            <button class="button" data-value="friendly"><i class="fas fa-smile"></i> Friendly</button>
-            <button class="button" data-value="gen_z"><i class="fas fa-bolt"></i> Gen Z</button>
-            <button class="button" data-value="taglish"><i class="fas fa-language"></i> Taglish</button>
+        <div class="box rules-card mb-4">
+          <h6 class="title is-6 mb-3"><span class="icon"><i class="fas fa-robot"></i></span><span>Reply Tone</span></h6>
+          <p class="is-size-7 has-text-grey mb-3">How should AI replies sound?</p>
+          <div class="buttons has-addons" id="tone-selector">
+            <button class="button is-small" data-value="professional"><span class="icon"><i class="fas fa-briefcase"></i></span><span>Professional</span></button>
+            <button class="button is-small" data-value="friendly"><span class="icon"><i class="fas fa-smile"></i></span><span>Friendly</span></button>
+            <button class="button is-small" data-value="gen_z"><span class="icon"><i class="fas fa-bolt"></i></span><span>Gen Z</span></button>
+            <button class="button is-small" data-value="taglish"><span class="icon"><i class="fas fa-language"></i></span><span>Taglish</span></button>
           </div>
         </div>
-        
-        <div class="box rules-card">
-          <h6><i class="fas fa-level-up-alt"></i> Automation Level</h6>
-          <p class="is-size-7 has-text-grey">How much automation do you want?</p>
+
+        <div class="box rules-card mb-4">
+          <h6 class="title is-6 mb-3"><span class="icon"><i class="fas fa-level-up-alt"></i></span><span>Automation Level</span></h6>
+          <p class="is-size-7 has-text-grey mb-3">How much automation do you want?</p>
           <input type="range" class="range-slider" id="automation-slider" min="0" max="2" step="1" value="0">
-          <div class="columns has-text-centered" style="margin-top: 8px;">
+          <div class="columns has-text-centered mt-2">
             <div class="column is-4"><span class="tag is-light">Manual</span></div>
             <div class="column is-4"><span class="tag is-warning">Semi-auto</span></div>
             <div class="column is-4"><span class="tag is-success">Autopilot</span></div>
           </div>
-          <div id="automation-label" class="has-text-centered" style="margin-top: 8px;"></div>
+          <p class="has-text-centered mt-2 is-size-7 has-text-grey" id="automation-label"></p>
         </div>
-        
-        <div class="box rules-card">
-          <h6><i class="fas fa-shield-alt"></i> Spam Strictness</h6>
-          <p class="is-size-7 has-text-grey">1 = Very strict (less spam), 10 = Lenient</p>
+
+        <div class="box rules-card mb-4">
+          <h6 class="title is-6 mb-3"><span class="icon"><i class="fas fa-shield-alt"></i></span><span>Spam Strictness</span></h6>
+          <p class="is-size-7 has-text-grey mb-3">1 = Very strict (less spam), 10 = Lenient</p>
           <input type="range" class="range-slider" id="strictness-slider" min="1" max="10" step="1" value="5">
-          <div class="level" style="margin-top: 8px;">
-            <div class="level-item has-text-centered">
-              <div>
-                <p class="heading">Strictness</p>
-                <p class="title is-6" id="strictness-value">5 / 10</p>
-              </div>
-            </div>
+          <div class="has-text-centered mt-2">
+            <span class="is-size-7 has-text-grey">Strictness</span>
+            <p class="title is-5 mb-0" id="strictness-value">5 / 10</p>
           </div>
         </div>
       </div>
-      
+
       <div class="column is-6">
-        <div class="box rules-card">
-          <h6><i class="fas fa-toggle-on"></i> Behavior Toggles</h6>
-          <div class="behavior-toggle">
-            <label>Auto-reply to questions
-              <label class="toggle-switch">
-                <input type="checkbox" id="toggle-reply-questions">
-                <span class="toggle-slider"></span>
-              </label>
-            </label>
+        <div class="box rules-card mb-4">
+          <h6 class="title is-6 mb-4"><span class="icon"><i class="fas fa-toggle-on"></i></span><span>Behavior Toggles</span></h6>
+          <div class="is-flex is-align-items-center is-justify-content-space-between py-2" style="border-bottom:1px solid #f0f0f0;">
+            <span class="is-size-7">Auto-reply to questions</span>
+            <span class="toggle-switch ml-2">
+              <input type="checkbox" id="toggle-reply-questions">
+              <span class="toggle-slider"></span>
+            </span>
           </div>
-          <div class="behavior-toggle">
-            <label>Auto-capture leads
-              <label class="toggle-switch">
-                <input type="checkbox" id="toggle-capture-leads" checked>
-                <span class="toggle-slider"></span>
-              </label>
-            </label>
+          <div class="is-flex is-align-items-center is-justify-content-space-between py-2" style="border-bottom:1px solid #f0f0f0;">
+            <span class="is-size-7">Auto-capture leads</span>
+            <span class="toggle-switch ml-2">
+              <input type="checkbox" id="toggle-capture-leads" checked>
+              <span class="toggle-slider"></span>
+            </span>
           </div>
-          <div class="behavior-toggle">
-            <label>Auto-hide spam
-              <label class="toggle-switch">
-                <input type="checkbox" id="toggle-hide-spam" checked>
-                <span class="toggle-slider"></span>
-              </label>
-            </label>
+          <div class="is-flex is-align-items-center is-justify-content-space-between py-2" style="border-bottom:1px solid #f0f0f0;">
+            <span class="is-size-7">Auto-hide spam</span>
+            <span class="toggle-switch ml-2">
+              <input type="checkbox" id="toggle-hide-spam" checked>
+              <span class="toggle-slider"></span>
+            </span>
           </div>
-          <div class="behavior-toggle">
-            <label>Send lead notifications via Telegram
-              <label class="toggle-switch">
-                <input type="checkbox" id="toggle-telegram">
-                <span class="toggle-slider"></span>
-              </label>
-            </label>
+          <div class="is-flex is-align-items-center is-justify-content-space-between py-2" style="border-bottom:1px solid #f0f0f0;">
+            <span class="is-size-7">Lead notifications via Telegram</span>
+            <span class="toggle-switch ml-2">
+              <input type="checkbox" id="toggle-telegram">
+              <span class="toggle-slider"></span>
+            </span>
           </div>
-          <div class="behavior-toggle">
-            <label>Send lead notifications via Email
-              <label class="toggle-switch">
-                <input type="checkbox" id="toggle-email">
-                <span class="toggle-slider"></span>
-              </label>
-            </label>
+          <div class="is-flex is-align-items-center is-justify-content-space-between py-2">
+            <span class="is-size-7">Lead notifications via Email</span>
+            <span class="toggle-switch ml-2">
+              <input type="checkbox" id="toggle-email">
+              <span class="toggle-slider"></span>
+            </span>
           </div>
         </div>
-        
-        <div class="box rules-card">
-          <h6><i class="fas fa-save"></i> Save Configuration</h6>
-          <button class="button is-primary is-fullwidth" id="save-rules-btn"><i class="fas fa-save"></i> Save All Settings</button>
-          <div id="rules-save-result" style="display:none;" class="box is-success">Settings saved successfully!</div>
+
+        <div class="box rules-card mb-4">
+          <h6 class="title is-6 mb-4"><span class="icon"><i class="fas fa-save"></i></span><span>Save Configuration</span></h6>
+          <button class="button is-primary is-fullwidth" id="save-rules-btn"><span class="icon"><i class="fas fa-save"></i></span><span>Save All Settings</span></button>
+          <div id="rules-save-result" class="notification is-success mt-3" style="display:none;">Settings saved successfully!</div>
         </div>
-        
-        <div class="box is-light">
-          <h6><i class="fas fa-info-circle"></i> Quick Summary</h6>
+
+        <div class="box has-background-light">
+          <h6 class="title is-6 mb-3"><span class="icon"><i class="fas fa-info-circle"></i></span><span>Quick Summary</span></h6>
           <div id="rules-summary">
-            <p>Configure your AI assistant's behavior above. Changes take effect immediately after saving.</p>
+            <p class="is-size-7">Configure your AI assistant's behavior above. Changes take effect immediately after saving.</p>
           </div>
         </div>
       </div>
