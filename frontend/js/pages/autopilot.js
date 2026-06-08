@@ -2,26 +2,26 @@ registerPage('autopilot', async function() {
   const container = document.getElementById('page-autopilot');
   
   container.innerHTML = `
-    <div class="grid-x grid-margin-x">
-      <div class="cell small-12">
+    <div class="columns">
+      <div class="column is-12">
         <h5><i class="fas fa-microchip"></i> Autopilot Mode</h5>
         <hr>
       </div>
       
-      <div class="cell small-4">
-        <div class="callout autopilot-status-card" id="autopilot-status-card">
-          <div class="grid-x align-middle">
-            <div class="cell shrink">
+      <div class="column is-4">
+        <div class="box autopilot-status-card" id="autopilot-status-card">
+          <div class="columns is-vcentered">
+            <div class="column is-narrow">
               <div class="autopilot-indicator" id="autopilot-indicator">&#9679;</div>
             </div>
-            <div class="cell auto">
+            <div class="column">
               <h6>Autopilot Status</h6>
               <p class="autopilot-status-text" id="autopilot-status-text">Checking...</p>
             </div>
           </div>
         </div>
         
-        <div class="callout">
+        <div class="box reveal-on-scroll">
           <h6>Autopilot Stats</h6>
           <div class="stat-row">
             <span>AI Replies Sent</span>
@@ -41,9 +41,9 @@ registerPage('autopilot', async function() {
           </div>
         </div>
         
-        <div class="callout secondary">
+        <div class="box">
           <h6>What Autopilot Does</h6>
-          <ul class="text-small">
+          <ul class="is-size-7">
             <li>&#10003; Classifies every new comment</li>
             <li>&#10003; Replies to questions &amp; leads</li>
             <li>&#10003; Captures leads automatically</li>
@@ -54,11 +54,11 @@ registerPage('autopilot', async function() {
         </div>
       </div>
       
-      <div class="cell small-8">
-        <div class="callout">
+      <div class="column is-8">
+        <div class="box">
           <h6><i class="fas fa-stream"></i> Real-time Activity Log</h6>
           <div class="activity-feed" id="activity-feed">
-            <div class="text-center loading-spinner"><i class="fas fa-spinner fa-spin"></i></div>
+            <div class="has-text-centered loading-spinner"><i class="fas fa-spinner fa-spin"></i></div>
           </div>
         </div>
       </div>
@@ -87,7 +87,7 @@ async function loadActivityLog() {
     
     const feed = document.getElementById('activity-feed');
     if (logs.length === 0) {
-      feed.innerHTML = '<p class="text-center text-gray"><i class="fas fa-clock fa-2x" style="opacity:0.3;"></i><br>No activity yet. Enable Autopilot to see actions.</p>';
+      feed.innerHTML = '<p class="has-text-centered has-text-grey"><i class="fas fa-clock fa-2x" style="opacity:0.3;"></i><br>No activity yet. Enable Autopilot to see actions.</p>';
       return;
     }
     
@@ -97,14 +97,14 @@ async function loadActivityLog() {
       const status = l.details?.status || 'completed';
       
       return `
-        <div class="activity-entry ${status}">
+        <div class="activity-entry ${status} reveal-on-scroll">
           <div class="activity-icon">${icon}</div>
           <div class="activity-content">
             <div class="activity-action">${label}</div>
             <div class="activity-detail">${escapeHtml(l.details?.text || JSON.stringify(l.details || ''))}</div>
             <div class="activity-meta">
-              <span class="text-small text-gray">${timeAgo(l.timestamp)}</span>
-              <span class="label ${status === 'completed' ? 'success' : status === 'failed' ? 'alert' : 'warning'}">${status}</span>
+              <span class="is-size-7 has-text-grey">${timeAgo(l.timestamp)}</span>
+              <span class="tag ${status === 'completed' ? 'is-success' : status === 'failed' ? 'is-danger' : 'is-warning'}">${status}</span>
             </div>
           </div>
         </div>
@@ -125,13 +125,13 @@ async function updateAutopilotStatus() {
     const card = document.getElementById('autopilot-status-card');
     
     if (enabled) {
-      indicator.className = 'autopilot-indicator active';
+      indicator.className = 'autopilot-indicator active pulse';
       text.textContent = 'Autopilot is RUNNING &mdash; AI handling comments automatically';
-      card.className = 'callout autopilot-status-card success';
+      card.className = 'box autopilot-status-card notification is-success';
     } else {
       indicator.className = 'autopilot-indicator';
       text.textContent = 'Autopilot is OFF &mdash; Enable from the top bar toggle';
-      card.className = 'callout autopilot-status-card warning';
+      card.className = 'box autopilot-status-card notification is-warning';
     }
   } catch(e) {}
 }

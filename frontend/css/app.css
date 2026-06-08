@@ -1,4 +1,4 @@
-/* ===== CommentFlow — Custom Styles ===== */
+/* ===== CommentFlow — Custom Styles (Bulma) ===== */
 
 /* --- Color Variables --- */
 :root {
@@ -26,6 +26,44 @@
   --radius: 6px;
   --radius-lg: 10px;
   --transition: all 0.2s ease;
+}
+
+/* --- Bulma Overrides --- */
+.box {
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+
+.title.is-5 {
+  font-weight: 700;
+}
+
+.tag {
+  font-weight: 600;
+}
+
+.table {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.navbar {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.menu-list a {
+  border-radius: 0;
+  padding: 0.7rem 1.25rem;
+}
+
+.menu-list a.is-active {
+  background: rgba(23, 121, 186, 0.15);
+  color: var(--sidebar-text-active);
+  font-weight: 600;
+}
+
+.buttons .button {
+  margin-bottom: 0;
 }
 
 /* --- Reset & Base --- */
@@ -118,8 +156,8 @@ body {
   z-index: 100;
 }
 
-#main-topbar .top-bar-left,
-#main-topbar .top-bar-right {
+#main-topbar .navbar-brand,
+#main-topbar .navbar-menu {
   flex: 0 1 auto;
 }
 
@@ -154,22 +192,65 @@ body {
   margin-right: 0.25rem;
 }
 
-.switch.tiny .switch-paddle {
+/* --- Custom Toggle Switch (Bulma-compatible) --- */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-switch .toggle-slider {
+  position: absolute;
+  inset: 0;
+  background: #ccc;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toggle-switch .toggle-slider::before {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  left: 3px;
+  bottom: 3px;
+  background: white;
+  border-radius: 50%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background: var(--success);
+}
+
+.toggle-switch input:checked + .toggle-slider::before {
+  transform: translateX(20px);
+}
+
+.toggle-switch.is-small {
   width: 36px;
   height: 18px;
-  border-radius: 9px;
 }
 
-.switch.tiny .switch-paddle::after {
+.toggle-switch.is-small .toggle-slider::before {
   width: 14px;
   height: 14px;
-  border-radius: 50%;
-  top: 2px;
   left: 2px;
+  bottom: 2px;
 }
 
-.switch-input:checked ~ .switch-paddle {
-  background: var(--success);
+.toggle-switch.is-small input:checked + .toggle-slider::before {
+  transform: translateX(18px);
 }
 
 /* --- Notification Badge --- */
@@ -254,7 +335,7 @@ body {
   color: var(--sidebar-text-active);
 }
 
-#sidebar-nav > li.active > a {
+#sidebar-nav > li.is-active > a {
   background: rgba(23, 121, 186, 0.15);
   color: var(--sidebar-text-active);
   border-left-color: var(--sidebar-active);
@@ -724,23 +805,8 @@ body {
   width: 120px;
 }
 
-.rule-slider input[type="range"] {
+.rule-slider .range-slider {
   width: 100%;
-  height: 4px;
-  -webkit-appearance: none;
-  appearance: none;
-  background: #ddd;
-  border-radius: 2px;
-  outline: none;
-}
-
-.rule-slider input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--primary);
-  cursor: pointer;
 }
 
 .rule-slider-value {
@@ -749,6 +815,45 @@ body {
   color: var(--primary);
   min-width: 28px;
   text-align: center;
+}
+
+/* --- Range Slider (replaces Foundation slider) --- */
+.range-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(to right, var(--primary) 0%, var(--primary) var(--fill, 50%), #ddd var(--fill, 50%), #ddd 100%);
+  outline: none;
+  transition: background 0.2s;
+}
+
+.range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--primary);
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(23, 121, 186, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.range-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 3px 10px rgba(23, 121, 186, 0.4);
+}
+
+.range-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--primary);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 6px rgba(23, 121, 186, 0.3);
 }
 
 /* --- Moderation Queue --- */
@@ -911,6 +1016,8 @@ body {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
   animation: toast-slide 0.3s ease;
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
 }
 
 .toast i { font-size: 1rem; }
@@ -920,9 +1027,24 @@ body {
 .toast.toast-warning { background: var(--warning); color: #333; }
 .toast.toast-info { background: var(--primary); }
 
+.toast::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: rgba(255,255,255,0.5);
+  animation: toast-progress 4s linear forwards;
+}
+
 @keyframes toast-slide {
   from { transform: translateX(100%); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes toast-progress {
+  from { width: 100%; }
+  to { width: 0%; }
 }
 
 /* --- Autopilot Page --- */
@@ -1102,8 +1224,8 @@ body {
     font-size: 1.4rem;
   }
 
-  #main-topbar .top-bar-left,
-  #main-topbar .top-bar-right {
+  #main-topbar .navbar-brand,
+  #main-topbar .navbar-menu {
     flex: 1;
   }
 
@@ -1162,7 +1284,7 @@ body {
 .gap-1 { gap: 0.5rem; }
 .gap-2 { gap: 1rem; }
 
-/* Honeycomb auto-reply list */
+/* --- Honeycomb Auto-Reply List --- */
 .auto-reply-list {
   list-style: none;
   margin: 0;
@@ -1193,4 +1315,145 @@ body {
   font-size: 0.75rem;
   color: var(--text-gray);
   flex-shrink: 0;
+}
+
+/* =========================================================
+   DYNAMIC ANIMATION EFFECTS
+   ========================================================= */
+
+/* --- Page Transition --- */
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.page-enter {
+  animation: pageIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* --- Modal Scale In --- */
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.95) translateY(-10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.modal.is-active .modal-content {
+  animation: modalIn 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.modal.is-active .modal-background {
+  backdrop-filter: blur(4px);
+  background: rgba(10, 10, 10, 0.6);
+}
+
+/* --- Card Hover Lift --- */
+.box, .card, .stat-card, .comment-card, .auto-reply-item {
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
+              box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.box:hover, .card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* --- Button Ripple Effect --- */
+.button {
+  position: relative;
+  overflow: hidden;
+}
+
+.button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%);
+  opacity: 0;
+  transform: scale(0);
+  transition: transform 0.4s, opacity 0.4s;
+}
+
+.button:active::after {
+  opacity: 1;
+  transform: scale(2);
+  transition: transform 0s, opacity 0s;
+}
+
+/* --- Skeleton Loading --- */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius);
+}
+
+.skeleton-text {
+  height: 14px;
+  margin-bottom: 8px;
+}
+
+.skeleton-title {
+  height: 20px;
+  width: 60%;
+  margin-bottom: 12px;
+}
+
+.skeleton-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+/* --- Scroll Reveal --- */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), 
+              transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.reveal-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* --- Pulse Animation for Status Indicators --- */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.status-indicator.online {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* --- Fade In for Lists --- */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.comment-card, .inbox-thread, .activity-item, .mod-item, .auto-reply-item {
+  animation: fadeInUp 0.3s ease forwards;
+}
+
+.comment-card:nth-child(1), .inbox-thread:nth-child(1), .activity-item:nth-child(1) { animation-delay: 0ms; }
+.comment-card:nth-child(2), .inbox-thread:nth-child(2), .activity-item:nth-child(2) { animation-delay: 50ms; }
+.comment-card:nth-child(3), .inbox-thread:nth-child(3), .activity-item:nth-child(3) { animation-delay: 100ms; }
+.comment-card:nth-child(4), .inbox-thread:nth-child(4), .activity-item:nth-child(4) { animation-delay: 150ms; }
+.comment-card:nth-child(5), .inbox-thread:nth-child(5), .activity-item:nth-child(5) { animation-delay: 200ms; }
+
+/* --- Notification Badge Bounce --- */
+@keyframes badgeBounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+.tag.is-rounded.badge-bounce {
+  animation: badgeBounce 0.4s ease;
 }

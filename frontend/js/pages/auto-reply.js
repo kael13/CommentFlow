@@ -60,27 +60,31 @@ registerPage('auto-reply', async function() {
   const container = document.getElementById('page-auto-reply');
   
   container.innerHTML = `
-    <div class="grid-x grid-margin-x">
-      <div class="cell small-12">
+    <div class="columns">
+      <div class="column is-12">
         <h5><i class="fas fa-reply-all"></i> Auto Reply System</h5>
         <hr>
       </div>
-      <div class="cell small-4">
-        <div class="callout">
+      <div class="column is-4">
+        <div class="box">
           <h6>Reply Templates</h6>
-          <div class="input-group">
-            <input class="input-group-field" type="text" id="new-template-scenario" placeholder="Scenario...">
+          <div class="field has-addons">
+            <div class="control is-expanded">
+              <input class="input" type="text" id="new-template-scenario" placeholder="Scenario...">
+            </div>
           </div>
-          <div class="input-group">
-            <select id="new-template-tone" class="input-group-field">
-              <option value="professional">Professional</option>
-              <option value="friendly">Friendly</option>
-              <option value="gen_z">Gen Z</option>
-              <option value="taglish">Taglish</option>
-            </select>
+          <div class="field has-addons">
+            <div class="control is-expanded">
+              <select id="new-template-tone" class="input">
+                <option value="professional">Professional</option>
+                <option value="friendly">Friendly</option>
+                <option value="gen_z">Gen Z</option>
+                <option value="taglish">Taglish</option>
+              </select>
+            </div>
           </div>
           <textarea id="new-template-text" rows="3" placeholder="Template text..."></textarea>
-          <button class="button small expanded" id="save-template-btn"><i class="fas fa-save"></i> Save Template</button>
+          <button class="button is-small is-fullwidth" id="save-template-btn"><i class="fas fa-save"></i> Save Template</button>
           <hr>
           <div class="template-filters">
             <select id="template-filter-scenario" class="small-margin-bottom">
@@ -101,11 +105,11 @@ registerPage('auto-reply', async function() {
           </div>
         </div>
       </div>
-      <div class="cell small-8">
-        <div class="callout">
+      <div class="column is-8">
+        <div class="box">
           <h6>Configuration</h6>
-          <div class="grid-x grid-margin-x">
-            <div class="cell small-4">
+          <div class="columns">
+            <div class="column is-4">
               <label>Auto Reply Mode
                 <select id="auto-reply-mode">
                   <option value="manual">Manual (suggest only)</option>
@@ -114,7 +118,7 @@ registerPage('auto-reply', async function() {
                 </select>
               </label>
             </div>
-            <div class="cell small-4">
+            <div class="column is-4">
               <label>AI Reply Tone
                 <select id="auto-reply-tone">
                   <option value="professional">Professional</option>
@@ -124,16 +128,16 @@ registerPage('auto-reply', async function() {
                 </select>
               </label>
             </div>
-            <div class="cell small-4">
+            <div class="column is-4">
               <label>&nbsp;</label>
-              <button class="button primary expanded" id="save-auto-reply-config"><i class="fas fa-save"></i> Save Config</button>
+              <button class="button is-primary is-fullwidth" id="save-auto-reply-config"><i class="fas fa-save"></i> Save Config</button>
             </div>
           </div>
         </div>
-        <div class="callout">
+        <div class="box">
           <h6>Saved Templates</h6>
           <div id="template-list">
-            <div class="text-center loading-spinner"><i class="fas fa-spinner fa-spin"></i></div>
+            <div class="has-text-centered loading-spinner"><i class="fas fa-spinner fa-spin"></i></div>
           </div>
         </div>
       </div>
@@ -186,21 +190,21 @@ async function loadTemplates() {
     
     const list = document.getElementById('template-list');
     if (templates.length === 0) {
-      list.innerHTML = '<p class="text-center text-gray">No templates saved yet.</p>';
+      list.innerHTML = '<p class="has-text-centered has-text-grey">No templates saved yet.</p>';
       return;
     }
     
     list.innerHTML = templates.map(t => `
       <div class="card template-card">
         <div class="card-section">
-          <div class="grid-x align-middle">
-            <div class="cell auto">
-              <span class="label scenario-${t.scenario}">${t.scenario.replace('_', ' ')}</span>
-              <span class="label tone-${t.tone}">${t.tone}</span>
-              <span class="text-small text-gray">Used ${t.usage_count || 0}x</span>
+          <div class="columns is-vcentered">
+            <div class="column">
+              <span class="tag scenario-${t.scenario}">${t.scenario.replace('_', ' ')}</span>
+              <span class="tag tone-${t.tone}">${t.tone}</span>
+              <span class="is-size-7 has-text-grey">Used ${t.usage_count || 0}x</span>
             </div>
-            <div class="cell shrink">
-              <button class="button tiny alert" onclick="deleteTemplate('${t.id}')"><i class="fas fa-trash"></i></button>
+            <div class="column is-narrow">
+              <button class="button is-small is-danger" onclick="deleteTemplate('${t.id}')"><i class="fas fa-trash"></i></button>
             </div>
           </div>
           <p class="template-text">${escapeHtml(t.template_text)}</p>
@@ -208,7 +212,7 @@ async function loadTemplates() {
       </div>
     `).join('');
   } catch(e) {
-    document.getElementById('template-list').innerHTML = '<p class="text-center text-gray">Failed to load templates.</p>';
+    document.getElementById('template-list').innerHTML = '<p class="has-text-centered has-text-grey">Failed to load templates.</p>';
   }
 }
 

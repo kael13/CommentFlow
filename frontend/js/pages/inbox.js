@@ -61,31 +61,33 @@ registerPage('inbox', async function() {
   const container = document.getElementById('page-inbox');
   
   container.innerHTML = `
-    <div class="grid-x grid-margin-x inbox-layout">
-      <div class="cell small-5 inbox-threads">
+    <div class="columns inbox-layout">
+      <div class="column is-5 inbox-threads">
         <div class="inbox-header">
           <h5><i class="fas fa-inbox"></i> Comment Inbox</h5>
-          <div class="input-group">
-            <input class="input-group-field" type="search" id="inbox-search" placeholder="Search comments...">
-            <div class="input-group-button">
-              <button class="button secondary" id="inbox-filter-btn"><i class="fas fa-filter"></i></button>
+          <div class="field has-addons">
+            <div class="control is-expanded">
+              <input class="input" type="search" id="inbox-search" placeholder="Search comments...">
+            </div>
+            <div class="control">
+              <button class="button is-light" id="inbox-filter-btn"><i class="fas fa-filter"></i></button>
             </div>
           </div>
-          <div class="inbox-tabs button-group small expanded">
-            <button class="button active" data-filter="all">All</button>
-            <button class="button" data-filter="lead">Leads</button>
-            <button class="button" data-filter="question">Questions</button>
-            <button class="button" data-filter="spam">Spam</button>
+          <div class="inbox-tabs buttons has-addons">
+            <button class="button is-active is-small is-fullwidth" data-filter="all">All</button>
+            <button class="button is-small is-fullwidth" data-filter="lead">Leads</button>
+            <button class="button is-small is-fullwidth" data-filter="question">Questions</button>
+            <button class="button is-small is-fullwidth" data-filter="spam">Spam</button>
           </div>
         </div>
         <div class="inbox-thread-list" id="inbox-thread-list">
-          <div class="text-center loading-spinner"><i class="fas fa-spinner fa-spin fa-2x"></i></div>
+          <div class="has-text-centered loading-spinner"><i class="fas fa-spinner fa-spin fa-2x"></i></div>
         </div>
       </div>
-      <div class="cell small-7 inbox-detail">
-        <div class="inbox-detail-empty text-center" style="padding: 40px;">
+      <div class="column is-7 inbox-detail">
+        <div class="inbox-detail-empty has-text-centered" style="padding: 40px;">
           <i class="fas fa-comment-dots fa-4x" style="color: #ccc;"></i>
-          <p class="lead" style="color: #999;">Select a comment to view details</p>
+          <p class="subtitle" style="color: #999;">Select a comment to view details</p>
         </div>
         <div class="inbox-detail-content" id="inbox-detail-content" style="display: none;"></div>
       </div>
@@ -131,7 +133,7 @@ function renderThreadList(comments) {
   const list = document.getElementById('inbox-thread-list');
   
   if (comments.length === 0) {
-    list.innerHTML = '<div class="text-center" style="padding: 30px;color:#999;"><i class="fas fa-inbox fa-3x"></i><p>No comments yet</p></div>';
+    list.innerHTML = '<div class="has-text-centered" style="padding: 30px;color:#999;"><i class="fas fa-inbox fa-3x"></i><p>No comments yet</p></div>';
     return;
   }
   
@@ -143,14 +145,14 @@ function renderThreadList(comments) {
       <div class="media-object-section main-section">
         <div class="comment-thread-header">
           <strong>${escapeHtml(c.author_name)}</strong>
-          <span class="text-small text-gray">${timeAgo(c.timestamp)}</span>
+          <span class="is-size-7 has-text-grey">${timeAgo(c.timestamp)}</span>
         </div>
         <div class="comment-thread-preview">${escapeHtml(truncate(c.text, 80))}</div>
         <div class="comment-thread-meta">
-          ${c.ai_intent ? `<span class="label intent-${c.ai_intent}">${c.ai_intent}</span>` : ''}
-          ${c.is_lead ? '<span class="label success">Lead</span>' : ''}
-          ${c.moderation_status === 'flagged' ? '<span class="label warning">Flagged</span>' : ''}
-          <span class="text-small text-gray"><i class="fas fa-heart"></i> ${c.like_count || 0}</span>
+          ${c.ai_intent ? `<span class="tag intent-${c.ai_intent}">${c.ai_intent}</span>` : ''}
+          ${c.is_lead ? '<span class="tag is-success">Lead</span>' : ''}
+          ${c.moderation_status === 'flagged' ? '<span class="tag is-warning">Flagged</span>' : ''}
+          <span class="is-size-7 has-text-grey"><i class="fas fa-heart"></i> ${c.like_count || 0}</span>
         </div>
       </div>
     </div>
@@ -177,35 +179,35 @@ function renderCommentDetail(comment) {
   
   detail.innerHTML = `
     <div class="comment-detail-card">
-      <div class="grid-x grid-margin-x align-middle">
-        <div class="cell small-1">
+      <div class="columns is-vcentered">
+        <div class="column is-1">
           <img src="https://graph.facebook.com/${comment.author_fb_id || 'default'}/picture?type=square" alt="" class="avatar" style="width:48px;height:48px;" onerror="this.src='https://via.placeholder.com/48'">
         </div>
-        <div class="cell small-11">
+        <div class="column is-11">
           <strong>${escapeHtml(comment.author_name)}</strong>
-          <span class="text-small text-gray">${timeAgo(comment.timestamp)}</span>
+          <span class="is-size-7 has-text-grey">${timeAgo(comment.timestamp)}</span>
           <div class="comment-tags" style="margin-top: 4px;">
-            ${comment.ai_intent ? `<span class="label intent-${comment.ai_intent}">${comment.ai_intent}</span>` : ''}
-            ${comment.sentiment ? `<span class="label sentiment-${comment.sentiment}">${comment.sentiment}</span>` : ''}
-            ${comment.is_lead ? '<span class="label success"><i class="fas fa-bolt"></i> Lead</span>' : ''}
-            ${comment.viral_score > 5 ? `<span class="label alert"><i class="fas fa-fire"></i> Viral</span>` : ''}
+            ${comment.ai_intent ? `<span class="tag intent-${comment.ai_intent}">${comment.ai_intent}</span>` : ''}
+            ${comment.sentiment ? `<span class="tag sentiment-${comment.sentiment}">${comment.sentiment}</span>` : ''}
+            ${comment.is_lead ? '<span class="tag is-success"><i class="fas fa-bolt"></i> Lead</span>' : ''}
+            ${comment.viral_score > 5 ? `<span class="tag is-danger"><i class="fas fa-fire"></i> Viral</span>` : ''}
           </div>
         </div>
       </div>
       <hr>
       <div class="comment-text">${escapeHtml(comment.text)}</div>
       <hr>
-      <div class="comment-actions button-group">
-        <button class="button small primary" onclick="openReplyModal('${comment.id}')"><i class="fas fa-reply"></i> Reply</button>
-        <button class="button small secondary" onclick="classifyComment('${comment.id}')"><i class="fas fa-tag"></i> Classify</button>
-        <button class="button small warning" onclick="flagComment('${comment.id}')"><i class="fas fa-flag"></i> Flag</button>
-        <button class="button small alert" onclick="hideComment('${comment.id}')"><i class="fas fa-eye-slash"></i> Hide</button>
+      <div class="comment-actions buttons has-addons">
+        <button class="button is-small is-primary" onclick="openReplyModal('${comment.id}')"><i class="fas fa-reply"></i> Reply</button>
+        <button class="button is-small is-light" onclick="classifyComment('${comment.id}')"><i class="fas fa-tag"></i> Classify</button>
+        <button class="button is-small is-warning" onclick="flagComment('${comment.id}')"><i class="fas fa-flag"></i> Flag</button>
+        <button class="button is-small is-danger" onclick="hideComment('${comment.id}')"><i class="fas fa-eye-slash"></i> Hide</button>
       </div>
       
       ${comment.reply_text ? `
-        <div class="callout secondary reply-display">
+        <div class="box reply-display">
           <strong><i class="fas fa-reply"></i> AI Reply</strong>
-          <span class="label ${comment.auto_replied ? 'success' : 'secondary'}">${comment.auto_replied ? 'Auto' : 'Manual'}</span>
+          <span class="tag ${comment.auto_replied ? 'is-success' : 'is-light'}">${comment.auto_replied ? 'Auto' : 'Manual'}</span>
           <p style="margin-top: 8px;">${escapeHtml(comment.reply_text)}</p>
         </div>
       ` : ''}
@@ -254,7 +256,7 @@ function openReplyModal(commentId) {
   // Generate initial reply suggestion
   generateReplySuggestion(commentId);
   
-  $('#reply-modal').foundation('open');
+  openModal('reply-modal');
 }
 
 async function generateReplySuggestion(commentId) {
@@ -294,7 +296,7 @@ document.getElementById('send-reply-btn').addEventListener('click', async functi
       auto_replied: false,
     });
     showToast('Reply sent!', 'success');
-    $('#reply-modal').foundation('close');
+    closeModal('reply-modal');
     loadInboxComments();
     selectComment(commentId);
   } catch (e) {}

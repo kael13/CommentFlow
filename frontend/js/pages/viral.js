@@ -28,41 +28,41 @@ registerPage('viral', async function() {
   const container = document.getElementById('page-viral');
   
   container.innerHTML = `
-    <div class="grid-x grid-margin-x">
-      <div class="cell small-12">
+    <div class="columns">
+      <div class="column is-12">
         <h5><i class="fas fa-fire"></i> Viral Engagement Detection</h5>
         <hr>
       </div>
       
-      <div class="cell small-4">
-        <div class="callout">
+      <div class="column is-4">
+        <div class="box">
           <h6>Trending Right Now</h6>
           <div id="trending-phrases">
-            <div class="text-center loading-spinner"><i class="fas fa-spinner fa-spin"></i></div>
+            <div class="has-text-centered loading-spinner"><i class="fas fa-spinner fa-spin"></i></div>
           </div>
         </div>
         
-        <div class="callout">
-          <button class="button alert expanded" id="scan-viral-btn"><i class="fas fa-sync"></i> Scan for Viral Content</button>
-          <p class="text-small text-gray">Scans recent comments and calculates viral scores</p>
-          <div id="scan-result" style="display:none;" class="callout success"></div>
+        <div class="box">
+          <button class="button is-danger is-fullwidth" id="scan-viral-btn"><i class="fas fa-sync"></i> Scan for Viral Content</button>
+          <p class="is-size-7 has-text-grey">Scans recent comments and calculates viral scores</p>
+          <div id="scan-result" style="display:none;" class="notification is-success"></div>
         </div>
         
-        <div class="callout secondary">
+        <div class="box">
           <h6>Viral Score Formula</h6>
-          <p class="text-small">Score = likes + (replies &times; 2) + length_bonus + engagement_bonus</p>
-          <ul class="text-small">
+          <p class="is-size-7">Score = likes + (replies &times; 2) + length_bonus + engagement_bonus</p>
+          <ul class="is-size-7">
             <li>length_bonus: +3 for long comments</li>
             <li>engagement_bonus: +5 if replies > likes</li>
           </ul>
         </div>
       </div>
       
-      <div class="cell small-8">
-        <div class="callout">
+      <div class="column is-8">
+        <div class="box">
           <h6>Top Viral Comments</h6>
           <div id="viral-comments-list">
-            <div class="text-center loading-spinner"><i class="fas fa-spinner fa-spin"></i></div>
+            <div class="has-text-centered loading-spinner"><i class="fas fa-spinner fa-spin"></i></div>
           </div>
         </div>
       </div>
@@ -92,22 +92,22 @@ async function loadViralComments() {
     
     const list = document.getElementById('viral-comments-list');
     if (comments.length === 0) {
-      list.innerHTML = '<p class="text-center text-gray"><i class="fas fa-fire fa-2x" style="opacity:0.3;"></i><br>No viral comments detected yet.</p>';
+      list.innerHTML = '<p class="has-text-centered has-text-grey"><i class="fas fa-fire fa-2x" style="opacity:0.3;"></i><br>No viral comments detected yet.</p>';
       return;
     }
     
     list.innerHTML = comments.map(c => `
-      <div class="card viral-card">
-        <div class="card-section">
-          <div class="grid-x align-middle">
-            <div class="cell auto">
-              <div class="media-object">
-                <div class="media-object-section">
+      <div class="card viral-card reveal-on-scroll">
+        <div class="card-content">
+          <div class="columns is-vcentered">
+            <div class="column is-flex-grow-1">
+              <div class="media">
+                <div class="media-left">
                   <img src="https://graph.facebook.com/${c.author_fb_id || 'default'}/picture?type=square" alt="" class="avatar" style="width:32px;height:32px;" onerror="this.src='https://via.placeholder.com/32'">
                 </div>
-                <div class="media-object-section main-section">
+                <div class="media-content">
                   <strong>${escapeHtml(c.author_name)}</strong>
-                  <span class="text-small text-gray">${timeAgo(c.timestamp)}</span>
+                  <span class="is-size-7 has-text-grey">${timeAgo(c.timestamp)}</span>
                 </div>
               </div>
               <p class="viral-text">${escapeHtml(c.text)}</p>
@@ -116,10 +116,10 @@ async function loadViralComments() {
                 <span><i class="fas fa-reply"></i> ${c.reply_count || 0}</span>
               </div>
             </div>
-            <div class="cell shrink text-center">
+            <div class="column is-narrow has-text-centered">
               <div class="viral-score">${c.viral_score}</div>
-              <div class="text-small text-gray">VIRAL SCORE</div>
-              <button class="button tiny ${c.is_pinned ? 'success' : 'secondary'}" onclick="togglePin('${c.id}', ${c.is_pinned})">
+              <div class="is-size-7 has-text-grey">VIRAL SCORE</div>
+              <button class="button is-small ${c.is_pinned ? 'is-success' : 'is-light'}" onclick="togglePin('${c.id}', ${c.is_pinned})">
                 <i class="fas fa-thumbtack"></i> ${c.is_pinned ? 'Pinned' : 'Pin'}
               </button>
             </div>
@@ -128,7 +128,7 @@ async function loadViralComments() {
       </div>
     `).join('');
   } catch(e) {
-    document.getElementById('viral-comments-list').innerHTML = '<p class="text-center text-gray">Failed to load</p>';
+    document.getElementById('viral-comments-list').innerHTML = '<p class="has-text-centered has-text-grey">Failed to load</p>';
   }
 }
 
@@ -139,7 +139,7 @@ async function loadTrending() {
     
     const container = document.getElementById('trending-phrases');
     if (phrases.length === 0) {
-      container.innerHTML = '<p class="text-center text-gray">No trending phrases yet</p>';
+      container.innerHTML = '<p class="has-text-centered has-text-grey">No trending phrases yet</p>';
       return;
     }
     
@@ -147,7 +147,7 @@ async function loadTrending() {
       <div class="trending-item">
         <span class="trending-rank">#${i + 1}</span>
         <span class="trending-word">${escapeHtml(typeof p === 'string' ? p : p.word || p.phrase)}</span>
-        <span class="label secondary">${p.count || ''}</span>
+        <span class="tag is-light">${p.count || ''}</span>
       </div>
     `).join('');
   } catch(e) {}

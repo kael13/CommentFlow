@@ -10,20 +10,27 @@ function registerPage(name, initializer) {
 
 function navigate(page) {
   // Hide all pages
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  
-  // Show target page
+  document.querySelectorAll('.page').forEach(p => {
+    p.classList.remove('active');
+    p.classList.remove('page-enter');
+  });
+
+  // Show target page with animation
   const pageEl = document.getElementById(`page-${page}`);
-  if (pageEl) pageEl.classList.add('active');
-  
+  if (pageEl) {
+    pageEl.classList.add('active');
+    // Trigger reflow then add animation class
+    void pageEl.offsetWidth;
+    pageEl.classList.add('page-enter');
+  }
+
   // Update sidebar
-  document.querySelectorAll('#sidebar-nav li').forEach(li => li.classList.remove('active'));
+  document.querySelectorAll('#sidebar-nav li').forEach(li => li.classList.remove('is-active'));
   const navItem = document.querySelector(`#sidebar-nav li[data-page="${page}"]`);
-  if (navItem) navItem.classList.add('active');
-  
+  if (navItem) navItem.classList.add('is-active');
+
   currentPage = page;
-  
-  // Call initializer if exists
+
   if (pageInitializers[page]) {
     pageInitializers[page]();
   }
@@ -75,7 +82,7 @@ document.getElementById('autopilot-switch').addEventListener('change', async (e)
 let autopilotPollInterval = null;
 function initAutopilotPolling() {
   if (autopilotPollInterval) clearInterval(autopilotPollInterval);
-  
+
   autopilotPollInterval = setInterval(async () => {
     if (settings.autopilot_enabled && currentPage === 'autopilot') {
       // Refresh autopilot activity log
@@ -84,9 +91,6 @@ function initAutopilotPolling() {
     }
   }, 5000);
 }
-
-// Initialize Foundation
-$(document).foundation();
 
 // URL hash-based navigation
 window.addEventListener('hashchange', () => {
@@ -97,3 +101,33 @@ window.addEventListener('hashchange', () => {
 // Initial navigation from hash
 const initialPage = window.location.hash.replace('#', '') || 'inbox';
 // (auth will call navigate after login)
+
+// Scroll reveal observer
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('is-visible');
+    }
+  });
+}, { threshold: 0.1 });
+
+function observeRevealElements() {
+  document.querySelectorAll('.reveal-on-scroll').forEach(el => {
+    revealObserver.observe(el);
+  });
+}
+
+// Count-up animation
+function animateCountUp(element, target, duration = 1000) {
+  const start = 0;
+  const startTime = performance.now();
+  function update(currentTime) {
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const current = Math.floor(start + (target - start) * eased);
+    element.textContent = current.toLocaleString();
+    if (progress < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}

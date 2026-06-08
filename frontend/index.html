@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CommentFlow — Dashboard</title>
-  <!-- Foundation CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/foundation-sites@6.8.1/dist/css/foundation.min.css">
+  <!-- Bulma CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
   <!-- Chart.js -->
@@ -19,13 +19,13 @@
 <body>
   <!-- Login Screen -->
   <div id="login-screen" class="login-screen">
-    <div class="grid-x align-center-middle" style="min-height: 100vh;">
-      <div class="cell small-10 medium-6 large-4">
-        <div class="callout login-card text-center">
+    <div class="columns is-centered is-vcentered" style="min-height: 100vh;">
+      <div class="column is-10-mobile is-6-tablet is-4-desktop">
+        <div class="box login-card has-text-centered">
           <img src="https://img.icons8.com/fluency/96/chat.png" alt="CommentFlow" style="width: 64px; margin-bottom: 1rem;">
           <h2>CommentFlow</h2>
           <p class="lead">Smart Facebook Comment Monitoring</p>
-          <button id="login-btn" class="button facebook-button expanded">
+          <button id="login-btn" class="button facebook-button is-fullwidth">
             <i class="fab fa-facebook"></i> Sign in with Facebook
           </button>
           <p class="text-small text-gray">Powered by Firebase Auth</p>
@@ -36,39 +36,37 @@
 
   <!-- Dashboard Layout -->
   <div id="dashboard" class="dashboard" style="display: none;">
-    <!-- Top Bar -->
-    <div class="top-bar" id="main-topbar">
-      <div class="top-bar-left">
-        <ul class="dropdown menu" data-dropdown-menu>
-          <li class="menu-text dashboard-title"><i class="fas fa-comment-dots"></i> CommentFlow</li>
-        </ul>
+    <!-- Navbar -->
+    <nav class="navbar" id="main-topbar">
+      <div class="navbar-brand">
+        <a class="navbar-item dashboard-title"><i class="fas fa-comment-dots"></i> CommentFlow</a>
       </div>
-      <div class="top-bar-right">
-        <ul class="menu">
-          <li id="autopilot-toggle-wrapper">
+      <div class="navbar-menu">
+        <div class="navbar-end">
+          <div class="navbar-item" id="autopilot-toggle-wrapper">
             <label class="autopilot-switch">
               <span class="autopilot-label"><i class="fas fa-robot"></i> Autopilot</span>
-              <div class="switch tiny">
-                <input class="switch-input" id="autopilot-switch" type="checkbox">
-                <label class="switch-paddle" for="autopilot-switch"></label>
-              </div>
+              <label class="toggle-switch is-small">
+                <input type="checkbox" id="autopilot-switch">
+                <span class="toggle-slider"></span>
+              </label>
             </label>
-          </li>
-          <li id="notif-bell">
-            <a href="#"><i class="fas fa-bell"></i> <span class="badge" id="notif-count">0</span></a>
-          </li>
-          <li id="user-menu">
-            <a href="#"><img id="user-avatar" src="" alt="" class="avatar"> <span id="user-name"></span> <i class="fas fa-caret-down"></i></a>
-          </li>
-        </ul>
+          </div>
+          <a class="navbar-item" id="notif-bell">
+            <i class="fas fa-bell"></i> <span class="tag is-danger is-rounded" id="notif-count">0</span>
+          </a>
+          <a class="navbar-item" id="user-menu">
+            <img id="user-avatar" src="" alt="" class="avatar"> <span id="user-name"></span> <i class="fas fa-caret-down"></i>
+          </a>
+        </div>
       </div>
-    </div>
+    </nav>
 
-    <div class="grid-x" style="min-height: calc(100vh - 49px);">
+    <div class="columns is-gapless" style="min-height: calc(100vh - 49px);">
       <!-- Sidebar Navigation -->
-      <div class="cell small-2 sidebar">
-        <ul class="vertical menu" id="sidebar-nav">
-          <li class="active" data-page="inbox"><a href="#inbox"><i class="fas fa-inbox"></i> <span>Smart Inbox</span></a></li>
+      <div class="column is-2 sidebar">
+        <ul class="menu" id="sidebar-nav">
+          <li class="is-active" data-page="inbox"><a href="#inbox"><i class="fas fa-inbox"></i> <span>Smart Inbox</span></a></li>
           <li data-page="auto-reply"><a href="#auto-reply"><i class="fas fa-reply-all"></i> <span>Auto Reply</span></a></li>
           <li data-page="leads"><a href="#leads"><i class="fas fa-bullseye"></i> <span>Lead Capture</span></a></li>
           <li data-page="analytics"><a href="#analytics"><i class="fas fa-chart-bar"></i> <span>Analytics</span></a></li>
@@ -82,7 +80,7 @@
       </div>
 
       <!-- Main Content -->
-      <div class="cell small-10 main-content" id="main-content">
+      <div class="column is-10 main-content" id="main-content">
         <div id="page-inbox" class="page active"></div>
         <div id="page-auto-reply" class="page"></div>
         <div id="page-leads" class="page"></div>
@@ -96,48 +94,60 @@
   </div>
 
   <!-- Reply Modal -->
-  <div class="reveal" id="reply-modal" data-reveal>
-    <h4><i class="fas fa-reply"></i> Auto Reply</h4>
-    <div id="reply-comment-preview" class="callout secondary"></div>
-    <label>Response
-      <textarea id="reply-textarea" rows="4"></textarea>
-    </label>
-    <div class="grid-x grid-margin-x">
-      <div class="cell small-4">
-        <label>Tone
-          <select id="reply-tone-select">
-            <option value="professional">Professional</option>
-            <option value="friendly">Friendly</option>
-            <option value="gen_z">Gen Z</option>
-            <option value="taglish">Taglish</option>
-          </select>
+  <div class="modal" id="reply-modal">
+    <div class="modal-background" onclick="closeModal('reply-modal')"></div>
+    <div class="modal-content">
+      <div class="box">
+        <h4 class="title is-5"><i class="fas fa-reply"></i> Auto Reply</h4>
+        <div id="reply-comment-preview" class="box"></div>
+        <label>Response
+          <textarea id="reply-textarea" rows="4"></textarea>
         </label>
-      </div>
-      <div class="cell small-4">
-        <label>&nbsp;</label>
-        <button id="regenerate-reply-btn" class="button secondary expanded"><i class="fas fa-sync"></i> Regenerate</button>
-      </div>
-      <div class="cell small-4">
-        <label>&nbsp;</label>
-        <button id="send-reply-btn" class="button primary expanded"><i class="fas fa-paper-plane"></i> Send Reply</button>
+        <div class="columns">
+          <div class="column is-4">
+            <label>Tone
+              <select id="reply-tone-select">
+                <option value="professional">Professional</option>
+                <option value="friendly">Friendly</option>
+                <option value="gen_z">Gen Z</option>
+                <option value="taglish">Taglish</option>
+              </select>
+            </label>
+          </div>
+          <div class="column is-4">
+            <label>&nbsp;</label>
+            <button id="regenerate-reply-btn" class="button is-light is-fullwidth"><i class="fas fa-sync"></i> Regenerate</button>
+          </div>
+          <div class="column is-4">
+            <label>&nbsp;</label>
+            <button id="send-reply-btn" class="button is-primary is-fullwidth"><i class="fas fa-paper-plane"></i> Send Reply</button>
+          </div>
+        </div>
       </div>
     </div>
-    <button class="close-button" data-close>&times;</button>
+    <button class="modal-close is-large" onclick="closeModal('reply-modal')"></button>
   </div>
 
   <!-- Lead Detail Modal -->
-  <div class="reveal" id="lead-modal" data-reveal>
-    <h4><i class="fas fa-bullseye"></i> Lead Details</h4>
-    <div id="lead-detail-content"></div>
-    <button class="close-button" data-close>&times;</button>
+  <div class="modal" id="lead-modal">
+    <div class="modal-background" onclick="closeModal('lead-modal')"></div>
+    <div class="modal-content">
+      <div class="box">
+        <h4 class="title is-5"><i class="fas fa-bullseye"></i> Lead Details</h4>
+        <div id="lead-detail-content"></div>
+      </div>
+    </div>
+    <button class="modal-close is-large" onclick="closeModal('lead-modal')"></button>
   </div>
 
   <!-- Toast Container -->
   <div id="toast-container"></div>
 
-  <!-- Foundation JS -->
-  <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/foundation-sites@6.8.1/dist/js/foundation.min.js"></script>
+  <!-- Modal Helpers -->
+  <script>
+    function openModal(id) { document.getElementById(id).classList.add('is-active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('is-active'); }
+  </script>
   <!-- App Scripts -->
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>

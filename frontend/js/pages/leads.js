@@ -41,11 +41,11 @@ function renderPagination(containerId, totalPages, currentPage, callback) {
   const container = document.getElementById(containerId);
   if (!container || totalPages <= 1) return;
   
-  let html = '<ul class="pagination">';
+  let html = '<nav class="pagination is-small is-centered" role="navigation"><ul class="pagination-list">';
   for (let i = 1; i <= totalPages; i++) {
-    html += `<li class="${i === currentPage ? 'current' : ''}"><a href="#" data-page="${i}">${i}</a></li>`;
+    html += `<li><a class="pagination-link ${i === currentPage ? 'is-current' : ''}" data-page="${i}">${i}</a></li>`;
   }
-  html += '</ul>';
+  html += '</ul></nav>';
   container.innerHTML = html;
   
   container.querySelectorAll('a[data-page]').forEach(a => {
@@ -60,20 +60,22 @@ registerPage('leads', async function() {
   const container = document.getElementById('page-leads');
   
   container.innerHTML = `
-    <div class="grid-x grid-margin-x">
-      <div class="cell small-12">
+    <div class="columns">
+      <div class="column is-12">
         <h5><i class="fas fa-bullseye"></i> Lead Capture</h5>
         <hr>
       </div>
-      <div class="cell small-12">
-        <div class="callout">
-          <div class="grid-x grid-margin-x align-middle">
-            <div class="cell small-4">
-              <div class="input-group">
-                <input class="input-group-field" type="search" id="leads-search" placeholder="Search leads...">
+      <div class="column is-12">
+        <div class="box">
+          <div class="columns align-middle">
+            <div class="column is-4">
+              <div class="field has-addons">
+                <div class="control is-expanded">
+                  <input class="input" type="search" id="leads-search" placeholder="Search leads...">
+                </div>
               </div>
             </div>
-            <div class="cell small-2">
+            <div class="column is-2">
               <select id="leads-status-filter">
                 <option value="">All Status</option>
                 <option value="new">New</option>
@@ -82,11 +84,11 @@ registerPage('leads', async function() {
                 <option value="closed">Closed</option>
               </select>
             </div>
-            <div class="cell small-3">
-              <button class="button secondary" id="export-csv-btn"><i class="fas fa-file-csv"></i> Export CSV</button>
-              <button class="button secondary" id="export-sheets-btn"><i class="fas fa-table"></i> Google Sheets</button>
+            <div class="column is-3">
+              <button class="button is-light" id="export-csv-btn"><i class="fas fa-file-csv"></i> Export CSV</button>
+              <button class="button is-light" id="export-sheets-btn"><i class="fas fa-table"></i> Google Sheets</button>
             </div>
-            <div class="cell small-3">
+            <div class="column is-3">
               <div class="stat lead-stats" id="lead-stats-bar">
                 <span class="stat-new">New: 0</span>
                 <span class="stat-contacted">Contacted: 0</span>
@@ -96,8 +98,8 @@ registerPage('leads', async function() {
           </div>
         </div>
       </div>
-      <div class="cell small-12">
-        <table class="hover" id="leads-table">
+      <div class="column is-12">
+        <table class="table is-hoverable is-fullwidth" id="leads-table">
           <thead>
             <tr>
               <th>Name</th>
@@ -109,7 +111,7 @@ registerPage('leads', async function() {
             </tr>
           </thead>
           <tbody id="leads-table-body">
-            <tr><td colspan="6" class="text-center"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>
+            <tr><td colspan="6" class="has-text-centered"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>
           </tbody>
         </table>
         <div class="pagination-controls" id="leads-pagination"></div>
@@ -136,13 +138,13 @@ registerPage('leads', async function() {
         <tr>
           <td><strong>${escapeHtml(l.name)}</strong></td>
           <td>${escapeHtml(l.product_interest || '-')}</td>
-          <td><span class="label secondary">${l.source || 'comment'}</span></td>
-          <td><span class="label lead-status-${l.status}">${l.status}</span></td>
-          <td class="text-small">${timeAgo(l.captured_at)}</td>
+          <td><span class="tag is-light">${l.source || 'comment'}</span></td>
+          <td><span class="tag lead-status-${l.status}">${l.status}</span></td>
+          <td class="is-size-7">${timeAgo(l.captured_at)}</td>
           <td>
-            <button class="button tiny primary" onclick="viewLead('${l.id}')"><i class="fas fa-eye"></i></button>
-            <button class="button tiny success" onclick="updateLeadStatus('${l.id}', 'contacted')"><i class="fas fa-check"></i></button>
-            <button class="button tiny warning" onclick="updateLeadStatus('${l.id}', 'converted')"><i class="fas fa-trophy"></i></button>
+            <button class="button is-small is-primary" onclick="viewLead('${l.id}')"><i class="fas fa-eye"></i></button>
+            <button class="button is-small is-success" onclick="updateLeadStatus('${l.id}', 'contacted')"><i class="fas fa-check"></i></button>
+            <button class="button is-small is-warning" onclick="updateLeadStatus('${l.id}', 'converted')"><i class="fas fa-trophy"></i></button>
           </td>
         </tr>
       `).join('');
@@ -158,7 +160,7 @@ registerPage('leads', async function() {
       renderPagination('leads-pagination', totalPages, page, loadLeads);
       currentPage = page;
     } catch(e) {
-      document.getElementById('leads-table-body').innerHTML = '<tr><td colspan="6" class="text-center text-gray">Failed to load leads</td></tr>';
+      document.getElementById('leads-table-body').innerHTML = '<tr><td colspan="6" class="has-text-centered has-text-grey">Failed to load leads</td></tr>';
     }
   }
   
@@ -180,14 +182,14 @@ function viewLead(id) {
     document.getElementById('lead-detail-content').innerHTML = `
       <p><strong>Name:</strong> ${escapeHtml(lead.name)}</p>
       <p><strong>Product Interest:</strong> ${escapeHtml(lead.product_interest || '-')}</p>
-      <p><strong>Status:</strong> <span class="label lead-status-${lead.status}">${lead.status}</span></p>
+      <p><strong>Status:</strong> <span class="tag lead-status-${lead.status}">${lead.status}</span></p>
       <p><strong>Captured:</strong> ${timeAgo(lead.captured_at)}</p>
       ${lead.notes ? `<p><strong>Notes:</strong> ${escapeHtml(lead.notes)}</p>` : ''}
       <hr>
-      <button class="button small success" onclick="updateLeadStatus('${lead.id}','contacted');$('#lead-modal').foundation('close')"><i class="fas fa-check"></i> Mark Contacted</button>
-      <button class="button small warning" onclick="updateLeadStatus('${lead.id}','converted');$('#lead-modal').foundation('close')"><i class="fas fa-trophy"></i> Mark Converted</button>
+      <button class="button is-small is-success" onclick="updateLeadStatus('${lead.id}','contacted');closeModal('lead-modal')"><i class="fas fa-check"></i> Mark Contacted</button>
+      <button class="button is-small is-warning" onclick="updateLeadStatus('${lead.id}','converted');closeModal('lead-modal')"><i class="fas fa-trophy"></i> Mark Converted</button>
     `;
-    $('#lead-modal').foundation('open');
+    openModal('lead-modal');
   }).catch(() => showToast('Failed to load lead', 'alert'));
 }
 

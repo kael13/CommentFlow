@@ -41,11 +41,11 @@ function renderPagination(containerId, totalPages, currentPage, callback) {
   const container = document.getElementById(containerId);
   if (!container || totalPages <= 1) return;
   
-  let html = '<ul class="pagination">';
+  let html = '<nav class="pagination is-small is-centered" role="navigation"><ul class="pagination-list">';
   for (let i = 1; i <= totalPages; i++) {
-    html += `<li class="${i === currentPage ? 'current' : ''}"><a href="#" data-page="${i}">${i}</a></li>`;
+    html += `<li><a class="pagination-link ${i === currentPage ? 'is-current' : ''}" data-page="${i}">${i}</a></li>`;
   }
-  html += '</ul>';
+  html += '</ul></nav>';
   container.innerHTML = html;
   
   container.querySelectorAll('a[data-page]').forEach(a => {
@@ -69,36 +69,36 @@ registerPage('analytics', async function() {
   const container = document.getElementById('page-analytics');
   
   container.innerHTML = `
-    <div class="grid-x grid-margin-x">
-      <div class="cell small-12">
+    <div class="columns">
+      <div class="column is-12">
         <h5><i class="fas fa-chart-bar"></i> Analytics Dashboard</h5>
         <hr>
       </div>
       
       <!-- Stat Cards -->
-      <div class="cell small-3">
-        <div class="stat-card blue">
+      <div class="column is-3">
+        <div class="stat-card blue reveal-on-scroll">
           <div class="stat-icon"><i class="fas fa-comments"></i></div>
           <div class="stat-value" id="stat-total-comments">-</div>
           <div class="stat-label">Total Comments</div>
         </div>
       </div>
-      <div class="cell small-3">
-        <div class="stat-card green">
+      <div class="column is-3">
+        <div class="stat-card green reveal-on-scroll">
           <div class="stat-icon"><i class="fas fa-bullseye"></i></div>
           <div class="stat-value" id="stat-total-leads">-</div>
           <div class="stat-label">Leads Captured</div>
         </div>
       </div>
-      <div class="cell small-3">
-        <div class="stat-card orange">
+      <div class="column is-3">
+        <div class="stat-card orange reveal-on-scroll">
           <div class="stat-icon"><i class="fas fa-clock"></i></div>
           <div class="stat-value" id="stat-avg-response">-</div>
           <div class="stat-label">Avg Response Time</div>
         </div>
       </div>
-      <div class="cell small-3">
-        <div class="stat-card purple">
+      <div class="column is-3">
+        <div class="stat-card purple reveal-on-scroll">
           <div class="stat-icon"><i class="fas fa-smile"></i></div>
           <div class="stat-value" id="stat-sentiment">-</div>
           <div class="stat-label">Sentiment Score</div>
@@ -106,37 +106,37 @@ registerPage('analytics', async function() {
       </div>
       
       <!-- Charts Row -->
-      <div class="cell small-8">
-        <div class="callout">
+      <div class="column is-8">
+        <div class="box reveal-on-scroll">
           <h6>Comments Over Time</h6>
           <canvas id="timeline-chart" height="250"></canvas>
         </div>
       </div>
-      <div class="cell small-4">
-        <div class="callout">
+      <div class="column is-4">
+        <div class="box reveal-on-scroll">
           <h6>Sentiment Breakdown</h6>
           <canvas id="sentiment-chart" height="250"></canvas>
         </div>
       </div>
       
       <!-- More stats -->
-      <div class="cell small-6">
-        <div class="callout">
+      <div class="column is-6">
+        <div class="box reveal-on-scroll">
           <h6>Intent Breakdown</h6>
           <canvas id="intent-chart" height="200"></canvas>
         </div>
       </div>
-      <div class="cell small-6">
-        <div class="callout">
+      <div class="column is-6">
+        <div class="box reveal-on-scroll">
           <h6>Lead Conversion</h6>
           <canvas id="lead-chart" height="200"></canvas>
         </div>
       </div>
       
-      <div class="cell small-12">
-        <div class="callout">
+      <div class="column is-12">
+        <div class="box">
           <h6>Weekly Trend</h6>
-          <table class="hover" id="weekly-table">
+          <table class="table is-hoverable is-fullwidth" id="weekly-table">
             <thead><tr><th>Day</th><th>Comments</th><th>Leads</th><th>Positive</th><th>Negative</th></tr></thead>
             <tbody id="weekly-tbody"></tbody>
           </table>
@@ -160,6 +160,15 @@ registerPage('analytics', async function() {
     const totalSentiment = sentiment.positive + sentiment.neutral + sentiment.negative || 1;
     const score = Math.round(((sentiment.positive || 0) / totalSentiment) * 100);
     document.getElementById('stat-sentiment').textContent = `${score}%`;
+    
+    // After loading stats, animate count-up
+    const statElements = document.querySelectorAll('.stat-value');
+    statElements.forEach(el => {
+      const target = parseInt(el.textContent) || 0;
+      if (target > 0 && typeof animateCountUp === 'function') {
+        animateCountUp(el, target);
+      }
+    });
     
     // Timeline chart
     const timelineData = await api.get('/analytics/timeline?period=day&days=14');
@@ -242,7 +251,7 @@ registerPage('analytics', async function() {
         <td>${d.negative || 0}</td>
       </tr>
     `).join('');
-    document.getElementById('weekly-tbody').innerHTML = trendHtml || '<tr><td colspan="5" class="text-center">No data</td></tr>';
+    document.getElementById('weekly-tbody').innerHTML = trendHtml || '<tr><td colspan="5" class="has-text-centered">No data</td></tr>';
     
   } catch(e) {
     showToast('Failed to load analytics', 'alert');

@@ -1,4 +1,3 @@
-// Utility: escape HTML
 function escapeHtml(str) {
   if (!str) return '';
   const div = document.createElement('div');
@@ -6,13 +5,11 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
-// Utility: truncate text
 function truncate(str, len) {
   if (!str) return '';
   return str.length > len ? str.substring(0, len) + '...' : str;
 }
 
-// Utility: time ago
 function timeAgo(dateStr) {
   if (!dateStr) return '';
   const now = new Date();
@@ -27,7 +24,6 @@ function timeAgo(dateStr) {
   return `${days}d ago`;
 }
 
-// Utility: debounce
 function debounce(fn, delay) {
   let timer;
   return function(...args) {
@@ -36,14 +32,13 @@ function debounce(fn, delay) {
   };
 }
 
-// Utility: render pagination
 function renderPagination(containerId, totalPages, currentPage, callback) {
   const container = document.getElementById(containerId);
   if (!container || totalPages <= 1) return;
   
-  let html = '<ul class="pagination">';
+  let html = '<ul class="pagination-list">';
   for (let i = 1; i <= totalPages; i++) {
-    html += `<li class="${i === currentPage ? 'current' : ''}"><a href="#" data-page="${i}">${i}</a></li>`;
+    html += `<li><a class="pagination-link ${i === currentPage ? 'is-current' : ''}" href="#" data-page="${i}">${i}</a></li>`;
   }
   html += '</ul>';
   container.innerHTML = html;
@@ -56,21 +51,29 @@ function renderPagination(containerId, totalPages, currentPage, callback) {
   });
 }
 
+function updateSliderFill(slider) {
+  const min = parseFloat(slider.min);
+  const max = parseFloat(slider.max);
+  const val = parseFloat(slider.value);
+  const percent = ((val - min) / (max - min)) * 100;
+  slider.style.setProperty('--fill', percent + '%');
+}
+
 registerPage('rules', async function() {
   const container = document.getElementById('page-rules');
   
   container.innerHTML = `
-    <div class="grid-x grid-margin-x">
-      <div class="cell small-12">
+    <div class="columns">
+      <div class="column is-12">
         <h5><i class="fas fa-sliders-h"></i> AI Rules & Control Panel</h5>
         <hr>
       </div>
       
-      <div class="cell small-6">
-        <div class="callout rules-card">
+      <div class="column is-6">
+        <div class="box rules-card">
           <h6><i class="fas fa-robot"></i> Reply Tone</h6>
-          <p class="text-small text-gray">How should AI replies sound?</p>
-          <div class="button-group expanded" id="tone-selector">
+          <p class="is-size-7 has-text-grey">How should AI replies sound?</p>
+          <div class="buttons has-addons is-fullwidth" id="tone-selector">
             <button class="button" data-value="professional"><i class="fas fa-briefcase"></i> Professional</button>
             <button class="button" data-value="friendly"><i class="fas fa-smile"></i> Friendly</button>
             <button class="button" data-value="gen_z"><i class="fas fa-bolt"></i> Gen Z</button>
@@ -78,84 +81,85 @@ registerPage('rules', async function() {
           </div>
         </div>
         
-        <div class="callout rules-card">
+        <div class="box rules-card">
           <h6><i class="fas fa-level-up-alt"></i> Automation Level</h6>
-          <p class="text-small text-gray">How much automation do you want?</p>
-          <div class="slider" data-slider data-initial-start="0" data-end="2" data-step="1" id="automation-slider">
-            <span class="slider-handle" data-slider-handle role="slider" tabindex="1"></span>
-            <span class="slider-fill" data-slider-fill></span>
+          <p class="is-size-7 has-text-grey">How much automation do you want?</p>
+          <input type="range" class="range-slider" id="automation-slider" min="0" max="2" step="1" value="0">
+          <div class="columns has-text-centered" style="margin-top: 8px;">
+            <div class="column is-4"><span class="tag is-light">Manual</span></div>
+            <div class="column is-4"><span class="tag is-warning">Semi-auto</span></div>
+            <div class="column is-4"><span class="tag is-success">Autopilot</span></div>
           </div>
-          <div class="grid-x text-center" style="margin-top: 8px;">
-            <div class="cell small-4"><span class="label secondary">Manual</span></div>
-            <div class="cell small-4"><span class="label warning">Semi-auto</span></div>
-            <div class="cell small-4"><span class="label success">Autopilot</span></div>
-          </div>
-          <div id="automation-label" class="text-center" style="margin-top: 8px;"></div>
+          <div id="automation-label" class="has-text-centered" style="margin-top: 8px;"></div>
         </div>
         
-        <div class="callout rules-card">
+        <div class="box rules-card">
           <h6><i class="fas fa-shield-alt"></i> Spam Strictness</h6>
-          <p class="text-small text-gray">1 = Very strict (less spam), 10 = Lenient</p>
-          <div class="slider" data-slider data-initial-start="5" data-end="10" data-step="1" id="strictness-slider">
-            <span class="slider-handle" data-slider-handle role="slider" tabindex="1"></span>
-            <span class="slider-fill" data-slider-fill></span>
+          <p class="is-size-7 has-text-grey">1 = Very strict (less spam), 10 = Lenient</p>
+          <input type="range" class="range-slider" id="strictness-slider" min="1" max="10" step="1" value="5">
+          <div class="level" style="margin-top: 8px;">
+            <div class="level-item has-text-centered">
+              <div>
+                <p class="heading">Strictness</p>
+                <p class="title is-6" id="strictness-value">5 / 10</p>
+              </div>
+            </div>
           </div>
-          <div class="stat" id="strictness-value">5 / 10</div>
         </div>
       </div>
       
-      <div class="cell small-6">
-        <div class="callout rules-card">
+      <div class="column is-6">
+        <div class="box rules-card">
           <h6><i class="fas fa-toggle-on"></i> Behavior Toggles</h6>
           <div class="behavior-toggle">
             <label>Auto-reply to questions
-              <div class="switch">
-                <input class="switch-input" id="toggle-reply-questions" type="checkbox">
-                <label class="switch-paddle" for="toggle-reply-questions"></label>
-              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="toggle-reply-questions">
+                <span class="toggle-slider"></span>
+              </label>
             </label>
           </div>
           <div class="behavior-toggle">
             <label>Auto-capture leads
-              <div class="switch">
-                <input class="switch-input" id="toggle-capture-leads" type="checkbox" checked>
-                <label class="switch-paddle" for="toggle-capture-leads"></label>
-              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="toggle-capture-leads" checked>
+                <span class="toggle-slider"></span>
+              </label>
             </label>
           </div>
           <div class="behavior-toggle">
             <label>Auto-hide spam
-              <div class="switch">
-                <input class="switch-input" id="toggle-hide-spam" type="checkbox" checked>
-                <label class="switch-paddle" for="toggle-hide-spam"></label>
-              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="toggle-hide-spam" checked>
+                <span class="toggle-slider"></span>
+              </label>
             </label>
           </div>
           <div class="behavior-toggle">
             <label>Send lead notifications via Telegram
-              <div class="switch">
-                <input class="switch-input" id="toggle-telegram" type="checkbox">
-                <label class="switch-paddle" for="toggle-telegram"></label>
-              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="toggle-telegram">
+                <span class="toggle-slider"></span>
+              </label>
             </label>
           </div>
           <div class="behavior-toggle">
             <label>Send lead notifications via Email
-              <div class="switch">
-                <input class="switch-input" id="toggle-email" type="checkbox">
-                <label class="switch-paddle" for="toggle-email"></label>
-              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="toggle-email">
+                <span class="toggle-slider"></span>
+              </label>
             </label>
           </div>
         </div>
         
-        <div class="callout rules-card">
+        <div class="box rules-card">
           <h6><i class="fas fa-save"></i> Save Configuration</h6>
-          <button class="button primary expanded" id="save-rules-btn"><i class="fas fa-save"></i> Save All Settings</button>
-          <div id="rules-save-result" style="display:none;" class="callout success">Settings saved successfully!</div>
+          <button class="button is-primary is-fullwidth" id="save-rules-btn"><i class="fas fa-save"></i> Save All Settings</button>
+          <div id="rules-save-result" style="display:none;" class="box is-success">Settings saved successfully!</div>
         </div>
         
-        <div class="callout secondary">
+        <div class="box is-light">
           <h6><i class="fas fa-info-circle"></i> Quick Summary</h6>
           <div id="rules-summary">
             <p>Configure your AI assistant's behavior above. Changes take effect immediately after saving.</p>
@@ -165,70 +169,63 @@ registerPage('rules', async function() {
     </div>
   `;
   
-  // Load current settings
+  const autoSlider = document.getElementById('automation-slider');
+  const strictSlider = document.getElementById('strictness-slider');
+  
   try {
     const s = await api.get('/settings');
     
-    // Set tone button
     document.querySelectorAll('#tone-selector .button').forEach(btn => {
-      btn.classList.remove('primary', 'active');
+      btn.classList.remove('is-primary', 'is-active');
       if (btn.dataset.value === s.tone) {
-        btn.classList.add('primary', 'active');
+        btn.classList.add('is-primary', 'is-active');
       }
     });
     
-    // Set automation slider
     const autoValues = { 'manual': 0, 'semi': 1, 'autopilot': 2 };
-    const autoSlider = $('#automation-slider');
-    autoSlider.foundation('_handleZFChange', autoValues[s.automation_level] || 0);
+    autoSlider.value = autoValues[s.automation_level] || 0;
+    updateSliderFill(autoSlider);
     
-    // Set strictness
-    const strictSlider = $('#strictness-slider');
-    strictSlider.foundation('_handleZFChange', s.spam_strictness || 5);
+    strictSlider.value = s.spam_strictness || 5;
+    updateSliderFill(strictSlider);
     document.getElementById('strictness-value').textContent = `${s.spam_strictness || 5} / 10`;
     
-    // Set toggles
     document.getElementById('toggle-reply-questions').checked = s.auto_reply_enabled || false;
     document.getElementById('toggle-capture-leads').checked = s.lead_capture_enabled !== false;
     document.getElementById('toggle-hide-spam').checked = true;
     document.getElementById('toggle-telegram').checked = s.notification_telegram || false;
     document.getElementById('toggle-email').checked = s.notification_email || false;
     
-    // Set automation label
     updateAutoLabel(autoValues[s.automation_level] || 0);
     
   } catch(e) {
-    // Defaults
   }
   
-  // Tone selection
   document.querySelectorAll('#tone-selector .button').forEach(btn => {
     btn.addEventListener('click', function() {
       document.querySelectorAll('#tone-selector .button').forEach(b => {
-        b.classList.remove('primary', 'active');
+        b.classList.remove('is-primary', 'is-active');
       });
-      this.classList.add('primary', 'active');
+      this.classList.add('is-primary', 'is-active');
     });
   });
   
-  // Slider listeners
-  $('#automation-slider').on('changed.zf.slider', function() {
-    const val = $(this).foundation('_getValue');
-    updateAutoLabel(val);
+  autoSlider.addEventListener('input', function() {
+    updateAutoLabel(this.value);
+    updateSliderFill(this);
   });
   
-  $('#strictness-slider').on('changed.zf.slider', function() {
-    const val = $(this).foundation('_getValue');
-    document.getElementById('strictness-value').textContent = `${val} / 10`;
+  strictSlider.addEventListener('input', function() {
+    document.getElementById('strictness-value').textContent = `${this.value} / 10`;
+    updateSliderFill(this);
   });
   
-  // Save button
   document.getElementById('save-rules-btn').addEventListener('click', async () => {
     try {
-      const tone = document.querySelector('#tone-selector .button.active')?.dataset?.value || 'professional';
-      const autoVal = $('#automation-slider').foundation('_getValue');
+      const tone = document.querySelector('#tone-selector .button.is-active')?.dataset?.value || 'professional';
+      const autoVal = parseInt(document.getElementById('automation-slider').value);
       const autoLabels = ['manual', 'semi', 'autopilot'];
-      const strictness = $('#strictness-slider').foundation('_getValue');
+      const strictness = parseInt(document.getElementById('strictness-slider').value);
       
       await api.patch('/settings', {
         tone,
