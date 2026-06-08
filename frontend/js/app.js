@@ -9,6 +9,11 @@ function registerPage(name, initializer) {
 }
 
 function navigate(page) {
+  // Close all open modals
+  document.querySelectorAll('.modal.is-active').forEach(m => {
+    m.classList.remove('is-active');
+  });
+
   // Hide all pages
   document.querySelectorAll('.page').forEach(p => {
     p.classList.remove('active');
