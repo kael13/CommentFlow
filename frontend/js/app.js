@@ -100,7 +100,7 @@ window.addEventListener('hashchange', () => {
 });
 
 // Initial navigation from hash
-const initialPage = window.location.hash.replace('#', '') || 'inbox';
+const initialPage = window.location.hash.replace('#', '') || 'analytics';
 // (auth will call navigate after login)
 
 // Scroll reveal observer

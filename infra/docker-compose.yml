@@ -50,6 +50,11 @@ services:
       ANALYTICS_SVC_URL: http://analytics-svc:3003
       MODERATION_SVC_URL: http://moderation-svc:3004
       REPLY_SVC_URL: http://reply-svc:3005
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: commentflow
+      DB_USER: postgres
+      DB_PASSWORD_FILE: /run/secrets/db_password
     secrets:
       - db_password
       - firebase_admin_key
