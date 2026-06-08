@@ -42,9 +42,10 @@ async function apiRequest(method, path, body = null) {
   }
   
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ error: 'Unknown error' }));
-    showToast(error.error || 'Request failed', 'alert');
-    throw new Error(error.error);
+    const error = await response.json().catch(() => ({ error: { message: 'Request failed' } }));
+    const msg = error?.error?.message || 'Request failed';
+    showToast(msg, 'alert');
+    throw new Error(msg);
   }
   
   // Handle empty responses

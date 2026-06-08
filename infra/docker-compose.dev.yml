@@ -207,7 +207,7 @@ services:
     environment:
       POSTGRES_DB: commentflow
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: devpassword123
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-devpassword123}
     ports:
       - "5432:5432"
     volumes:

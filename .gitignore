@@ -44,6 +44,10 @@ docker-compose.override.yml
 coverage/
 .nyc_output/
 
+# Generated config
+frontend/js/config.js
+login-scripts/config.js
+
 # Misc
 *.bak
 *.tmp

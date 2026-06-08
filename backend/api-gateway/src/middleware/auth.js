@@ -50,9 +50,9 @@ export async function authenticate(req, _res, next) {
     // Dev mode: accept any request with a dev user
     if (process.env.NODE_ENV === "development" && process.env.DEV_SKIP_AUTH === "true") {
       req.user = {
-        id: authHeader ? "dev-authed-user" : "dev-user-id",
-        email: "dev@example.com",
-        name: "Dev User",
+        id: authHeader ? "dev-authed-user" : (process.env.DEV_USER_ID || "dev-user-id"),
+        email: process.env.DEV_USER_EMAIL || "dev@example.com",
+        name: process.env.DEV_USER_NAME || "Dev User",
         picture: null,
       };
       return next();

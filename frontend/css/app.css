@@ -94,23 +94,28 @@
   }
 }
 
-/* ── Dashboard Content Grid ── */
+/* ── Dashboard Layout ── */
+#dashboard .columns.is-gapless {
+  grid-template-rows: 1fr;
+}
+
 .main-content {
-  display: grid;
-  grid-template: 1fr / 1fr;
-  overflow: hidden;
+  position: relative;
 }
 
 .page {
-  grid-area: 1 / 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.25s ease;
-  overflow-y: auto;
   z-index: 1;
 }
 
 .page.active {
+  position: relative;
   opacity: 1;
   pointer-events: auto;
   z-index: 2;

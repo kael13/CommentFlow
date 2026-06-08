@@ -42,7 +42,7 @@ services:
     environment:
       PORT: 3000
       NODE_ENV: development
-      DEV_SKIP_AUTH: "true"
+      DEV_SKIP_AUTH: ${DEV_SKIP_AUTH:-false}
       REDIS_HOST: redis
       REDIS_PORT: 6379
       COMMENT_SVC_URL: http://comment-svc:3001

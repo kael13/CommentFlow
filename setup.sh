@@ -20,10 +20,14 @@ if [ ! -f "$PROJECT_ROOT/.env" ]; then
 
     sed -i.bak "s/ENCRYPTION_KEY=your-32-byte-hex-encryption-key/ENCRYPTION_KEY=$ENCRYPTION_KEY/" "$PROJECT_ROOT/.env"
     sed -i.bak "s/JWT_SECRET=your-jwt-secret-here/JWT_SECRET=$JWT_SECRET/" "$PROJECT_ROOT/.env"
-    sed -i.bak "s/DB_PASSWORD=your-db-password/DB_PASSWORD=devpassword123/" "$PROJECT_ROOT/.env"
+    sed -i.bak "s/DB_PASSWORD=change-me-to-a-strong-password/DB_PASSWORD=${DB_PASSWORD:-devpassword123}/" "$PROJECT_ROOT/.env"
     rm -f "$PROJECT_ROOT/.env.bak"
 
+    # Generate frontend config files from .env
+    bash "$SCRIPT_DIR/scripts/generate-config.sh" "$PROJECT_ROOT/.env"
+
     echo "  ✓ .env created with random ENCRYPTION_KEY and JWT_SECRET"
+    echo "  ✓ frontend config files generated"
     echo "  ⚠  Edit .env to add your OPENROUTER_API_KEY"
 else
     echo "→ .env already exists, skipping generation"

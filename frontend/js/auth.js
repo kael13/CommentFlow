@@ -1,13 +1,5 @@
-// Firebase config (from login-scripts)
-const firebaseConfig = {
-  apiKey: "AIzaSyAMQJ8qx0uJxGd2C1onCHqxiWDWV0FeQEg",
-  authDomain: "oauth-project-1099b.firebaseapp.com",
-  projectId: "oauth-project-1099b",
-  storageBucket: "oauth-project-1099b.firebasestorage.app",
-  messagingSenderId: "656738296444",
-  appId: "1:656738296444:web:5d95d0139f3bff1fd2dff9",
-  measurementId: "G-YPT7T55ZT9"
-};
+// Firebase config — injected by generate-config.sh (see config.js)
+const firebaseConfig = window.FIREBASE_CONFIG;
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
