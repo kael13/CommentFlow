@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CommentFlow — Dashboard</title>
+  <!-- Foundation CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/foundation-sites@6.8.1/dist/css/foundation.min.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <!-- Firebase Auth -->
+  <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-auth-compat.js"></script>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <!-- Login Screen -->
+  <div id="login-screen" class="login-screen">
+    <div class="grid-x align-center-middle" style="min-height: 100vh;">
+      <div class="cell small-10 medium-6 large-4">
+        <div class="callout login-card text-center">
+          <img src="https://img.icons8.com/fluency/96/chat.png" alt="CommentFlow" style="width: 64px; margin-bottom: 1rem;">
+          <h2>CommentFlow</h2>
+          <p class="lead">Smart Facebook Comment Monitoring</p>
+          <button id="login-btn" class="button facebook-button expanded">
+            <i class="fab fa-facebook"></i> Sign in with Facebook
+          </button>
+          <p class="text-small text-gray">Powered by Firebase Auth</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard Layout -->
+  <div id="dashboard" class="dashboard" style="display: none;">
+    <!-- Top Bar -->
+    <div class="top-bar" id="main-topbar">
+      <div class="top-bar-left">
+        <ul class="dropdown menu" data-dropdown-menu>
+          <li class="menu-text dashboard-title"><i class="fas fa-comment-dots"></i> CommentFlow</li>
+        </ul>
+      </div>
+      <div class="top-bar-right">
+        <ul class="menu">
+          <li id="autopilot-toggle-wrapper">
+            <label class="autopilot-switch">
+              <span class="autopilot-label"><i class="fas fa-robot"></i> Autopilot</span>
+              <div class="switch tiny">
+                <input class="switch-input" id="autopilot-switch" type="checkbox">
+                <label class="switch-paddle" for="autopilot-switch"></label>
+              </div>
+            </label>
+          </li>
+          <li id="notif-bell">
+            <a href="#"><i class="fas fa-bell"></i> <span class="badge" id="notif-count">0</span></a>
+          </li>
+          <li id="user-menu">
+            <a href="#"><img id="user-avatar" src="" alt="" class="avatar"> <span id="user-name"></span> <i class="fas fa-caret-down"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="grid-x" style="min-height: calc(100vh - 49px);">
+      <!-- Sidebar Navigation -->
+      <div class="cell small-2 sidebar">
+        <ul class="vertical menu" id="sidebar-nav">
+          <li class="active" data-page="inbox"><a href="#inbox"><i class="fas fa-inbox"></i> <span>Smart Inbox</span></a></li>
+          <li data-page="auto-reply"><a href="#auto-reply"><i class="fas fa-reply-all"></i> <span>Auto Reply</span></a></li>
+          <li data-page="leads"><a href="#leads"><i class="fas fa-bullseye"></i> <span>Lead Capture</span></a></li>
+          <li data-page="analytics"><a href="#analytics"><i class="fas fa-chart-bar"></i> <span>Analytics</span></a></li>
+          <li data-page="moderation"><a href="#moderation"><i class="fas fa-shield-alt"></i> <span>Moderation</span></a></li>
+          <li data-page="rules"><a href="#rules"><i class="fas fa-sliders-h"></i> <span>AI Rules</span></a></li>
+          <li data-page="viral"><a href="#viral"><i class="fas fa-fire"></i> <span>Viral Detector</span></a></li>
+          <li data-page="autopilot"><a href="#autopilot"><i class="fas fa-microchip"></i> <span>Autopilot</span></a></li>
+          <li class="divider"></li>
+          <li id="logout-btn"><a href="#"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+        </ul>
+      </div>
+
+      <!-- Main Content -->
+      <div class="cell small-10 main-content" id="main-content">
+        <div id="page-inbox" class="page active"></div>
+        <div id="page-auto-reply" class="page"></div>
+        <div id="page-leads" class="page"></div>
+        <div id="page-analytics" class="page"></div>
+        <div id="page-moderation" class="page"></div>
+        <div id="page-rules" class="page"></div>
+        <div id="page-viral" class="page"></div>
+        <div id="page-autopilot" class="page"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reply Modal -->
+  <div class="reveal" id="reply-modal" data-reveal>
+    <h4><i class="fas fa-reply"></i> Auto Reply</h4>
+    <div id="reply-comment-preview" class="callout secondary"></div>
+    <label>Response
+      <textarea id="reply-textarea" rows="4"></textarea>
+    </label>
+    <div class="grid-x grid-margin-x">
+      <div class="cell small-4">
+        <label>Tone
+          <select id="reply-tone-select">
+            <option value="professional">Professional</option>
+            <option value="friendly">Friendly</option>
+            <option value="gen_z">Gen Z</option>
+            <option value="taglish">Taglish</option>
+          </select>
+        </label>
+      </div>
+      <div class="cell small-4">
+        <label>&nbsp;</label>
+        <button id="regenerate-reply-btn" class="button secondary expanded"><i class="fas fa-sync"></i> Regenerate</button>
+      </div>
+      <div class="cell small-4">
+        <label>&nbsp;</label>
+        <button id="send-reply-btn" class="button primary expanded"><i class="fas fa-paper-plane"></i> Send Reply</button>
+      </div>
+    </div>
+    <button class="close-button" data-close>&times;</button>
+  </div>
+
+  <!-- Lead Detail Modal -->
+  <div class="reveal" id="lead-modal" data-reveal>
+    <h4><i class="fas fa-bullseye"></i> Lead Details</h4>
+    <div id="lead-detail-content"></div>
+    <button class="close-button" data-close>&times;</button>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
+
+  <!-- Foundation JS -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/foundation-sites@6.8.1/dist/js/foundation.min.js"></script>
+  <!-- App Scripts -->
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/pages/inbox.js"></script>
+  <script src="js/pages/auto-reply.js"></script>
+  <script src="js/pages/leads.js"></script>
+  <script src="js/pages/analytics.js"></script>
+  <script src="js/pages/moderation.js"></script>
+  <script src="js/pages/rules.js"></script>
+  <script src="js/pages/viral.js"></script>
+  <script src="js/pages/autopilot.js"></script>
+</body>
+</html>

@@ -1,0 +1,299 @@
+version: "3.9"
+
+services:
+  # ──────────────────────────────────────────────
+  # Nginx Load Balancer / Reverse Proxy
+  # ──────────────────────────────────────────────
+  nginx:
+    image: nginx:alpine
+    container_name: cf-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/modsecurity:/etc/nginx/modsecurity:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
+    networks:
+      - frontend
+    depends_on:
+      api-gateway:
+        condition: service_healthy
+      frontend:
+        condition: service_started
+
+  # ──────────────────────────────────────────────
+  # Frontend (static files served by nginx)
+  # ──────────────────────────────────────────────
+  frontend:
+    build:
+      context: ../
+      dockerfile: infra/Dockerfile.frontend
+    container_name: cf-frontend
+    restart: unless-stopped
+    networks:
+      - frontend
+
+  # ──────────────────────────────────────────────
+  # API Gateway
+  # ──────────────────────────────────────────────
+  api-gateway:
+    build:
+      context: ../backend/api-gateway
+      dockerfile: ../../infra/Dockerfile.backend
+    container_name: cf-api-gateway
+    restart: unless-stopped
+    environment:
+      PORT: 3000
+      NODE_ENV: production
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      COMMENT_SVC_URL: http://comment-svc:3001
+      LEAD_SVC_URL: http://lead-svc:3002
+      ANALYTICS_SVC_URL: http://analytics-svc:3003
+      MODERATION_SVC_URL: http://moderation-svc:3004
+      REPLY_SVC_URL: http://reply-svc:3005
+    secrets:
+      - db_password
+      - firebase_admin_key
+      - encryption_key
+      - jwt_secret
+    networks:
+      - frontend
+      - backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  # ──────────────────────────────────────────────
+  # Comment Service
+  # ──────────────────────────────────────────────
+  comment-svc:
+    build:
+      context: ../backend/services/comment-svc
+      dockerfile: ../../../infra/Dockerfile.backend
+    container_name: cf-comment-svc
+    restart: unless-stopped
+    environment:
+      PORT: 3001
+      NODE_ENV: production
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: commentflow
+      DB_USER: comment_svc
+      DB_PASSWORD_FILE: /run/secrets/db_password
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    secrets:
+      - db_password
+      - encryption_key
+    networks:
+      - backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # ──────────────────────────────────────────────
+  # Lead Service
+  # ──────────────────────────────────────────────
+  lead-svc:
+    build:
+      context: ../backend/services/lead-svc
+      dockerfile: ../../../infra/Dockerfile.backend
+    container_name: cf-lead-svc
+    restart: unless-stopped
+    environment:
+      PORT: 3002
+      NODE_ENV: production
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: commentflow
+      DB_USER: lead_svc
+      DB_PASSWORD_FILE: /run/secrets/db_password
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    secrets:
+      - db_password
+      - encryption_key
+    networks:
+      - backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # ──────────────────────────────────────────────
+  # Analytics Service
+  # ──────────────────────────────────────────────
+  analytics-svc:
+    build:
+      context: ../backend/services/analytics-svc
+      dockerfile: ../../../infra/Dockerfile.backend
+    container_name: cf-analytics-svc
+    restart: unless-stopped
+    environment:
+      PORT: 3003
+      NODE_ENV: production
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: commentflow
+      DB_USER: analytics_svc
+      DB_PASSWORD_FILE: /run/secrets/db_password
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    secrets:
+      - db_password
+    networks:
+      - backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # ──────────────────────────────────────────────
+  # Moderation Service
+  # ──────────────────────────────────────────────
+  moderation-svc:
+    build:
+      context: ../backend/services/moderation-svc
+      dockerfile: ../../../infra/Dockerfile.backend
+    container_name: cf-moderation-svc
+    restart: unless-stopped
+    environment:
+      PORT: 3004
+      NODE_ENV: production
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: commentflow
+      DB_USER: moderation_svc
+      DB_PASSWORD_FILE: /run/secrets/db_password
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    secrets:
+      - db_password
+      - encryption_key
+    networks:
+      - backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # ──────────────────────────────────────────────
+  # Reply Service
+  # ──────────────────────────────────────────────
+  reply-svc:
+    build:
+      context: ../backend/services/reply-svc
+      dockerfile: ../../../infra/Dockerfile.backend
+    container_name: cf-reply-svc
+    restart: unless-stopped
+    environment:
+      PORT: 3005
+      NODE_ENV: production
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: commentflow
+      DB_USER: reply_svc
+      DB_PASSWORD_FILE: /run/secrets/db_password
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    secrets:
+      - db_password
+      - encryption_key
+    networks:
+      - backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # ──────────────────────────────────────────────
+  # PostgreSQL
+  # ──────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: cf-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: commentflow
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    secrets:
+      - db_password
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d commentflow"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  # ──────────────────────────────────────────────
+  # Redis
+  # ──────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: cf-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redisdata:/data
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+# ──────────────────────────────────────────────
+# Networks
+# ──────────────────────────────────────────────
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+    internal: true
+
+# ──────────────────────────────────────────────
+# Volumes
+# ──────────────────────────────────────────────
+volumes:
+  pgdata:
+    driver: local
+  redisdata:
+    driver: local
+
+# ──────────────────────────────────────────────
+# Secrets
+# ──────────────────────────────────────────────
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt
+  firebase_admin_key:
+    file: ./secrets/firebase_admin_key.json
+  encryption_key:
+    file: ./secrets/encryption_key.txt
+  jwt_secret:
+    file: ./secrets/jwt_secret.txt

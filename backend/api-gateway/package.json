@@ -1,0 +1,19 @@
+{
+  "name": "@commentflow/api-gateway",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "helmet": "^7.1.0",
+    "cors": "^2.8.5",
+    "firebase-admin": "^12.6.0",
+    "express-rate-limit": "^7.4.0",
+    "rate-limit-redis": "^4.2.0",
+    "http-proxy-middleware": "^3.0.0",
+    "@commentflow/shared": "file:../../shared"
+  }
+}
