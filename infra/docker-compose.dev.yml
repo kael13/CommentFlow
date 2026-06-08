@@ -1,0 +1,252 @@
+version: "3.9"
+
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: cf-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx-dev.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - frontend
+    depends_on:
+      api-gateway:
+        condition: service_healthy
+      frontend:
+        condition: service_started
+
+  frontend:
+    build:
+      context: ../
+      dockerfile: infra/Dockerfile.frontend
+    container_name: cf-frontend
+    restart: unless-stopped
+    networks:
+      - frontend
+
+  api-gateway:
+    build:
+      context: ../backend
+      dockerfile: ../infra/Dockerfile.backend
+      args:
+        SERVICE_DIR: api-gateway
+    container_name: cf-api-gateway
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    environment:
+      PORT: 3000
+      NODE_ENV: development
+      SERVICE_NAME: api-gateway
+      REDIS_URL: redis://redis:6379
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: commentflow
+      DB_USER: postgres
+      COMMENT_SVC_URL: http://comment-svc:3001
+      LEAD_SVC_URL: http://lead-svc:3002
+      ANALYTICS_SVC_URL: http://analytics-svc:3003
+      MODERATION_SVC_URL: http://moderation-svc:3004
+      REPLY_SVC_URL: http://reply-svc:3005
+    networks:
+      - frontend
+      - backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  comment-svc:
+    build:
+      context: ../backend
+      dockerfile: ../infra/Dockerfile.backend
+      args:
+        SERVICE_DIR: services/comment-svc
+    container_name: cf-comment-svc
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    environment:
+      PORT: 3001
+      NODE_ENV: development
+      SERVICE_NAME: comment-svc
+      REDIS_URL: redis://redis:6379
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: commentflow
+      DB_USER: postgres
+    networks:
+      - backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  lead-svc:
+    build:
+      context: ../backend
+      dockerfile: ../infra/Dockerfile.backend
+      args:
+        SERVICE_DIR: services/lead-svc
+    container_name: cf-lead-svc
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    environment:
+      PORT: 3002
+      NODE_ENV: development
+      SERVICE_NAME: lead-svc
+      REDIS_URL: redis://redis:6379
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: commentflow
+      DB_USER: postgres
+    networks:
+      - backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  analytics-svc:
+    build:
+      context: ../backend
+      dockerfile: ../infra/Dockerfile.backend
+      args:
+        SERVICE_DIR: services/analytics-svc
+    container_name: cf-analytics-svc
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    environment:
+      PORT: 3003
+      NODE_ENV: development
+      SERVICE_NAME: analytics-svc
+      REDIS_URL: redis://redis:6379
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: commentflow
+      DB_USER: postgres
+    networks:
+      - backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  moderation-svc:
+    build:
+      context: ../backend
+      dockerfile: ../infra/Dockerfile.backend
+      args:
+        SERVICE_DIR: services/moderation-svc
+    container_name: cf-moderation-svc
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    environment:
+      PORT: 3004
+      NODE_ENV: development
+      SERVICE_NAME: moderation-svc
+      REDIS_URL: redis://redis:6379
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: commentflow
+      DB_USER: postgres
+    networks:
+      - backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  reply-svc:
+    build:
+      context: ../backend
+      dockerfile: ../infra/Dockerfile.backend
+      args:
+        SERVICE_DIR: services/reply-svc
+    container_name: cf-reply-svc
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    environment:
+      PORT: 3005
+      NODE_ENV: development
+      SERVICE_NAME: reply-svc
+      REDIS_URL: redis://redis:6379
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: commentflow
+      DB_USER: postgres
+    networks:
+      - backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: cf-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: commentflow
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: devpassword123
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d commentflow"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  redis:
+    image: redis:7-alpine
+    container_name: cf-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+
+volumes:
+  pgdata:
+    driver: local
+  redisdata:
+    driver: local
