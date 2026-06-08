@@ -20,17 +20,19 @@
 <body>
   <!-- Login Screen -->
   <div id="login-screen" class="login-screen">
-    <div class="columns is-centered is-vcentered" style="min-height: 100vh;">
-      <div class="column is-10-mobile is-6-tablet is-4-desktop">
-        <div class="box login-card has-text-centered">
-          <img src="https://img.icons8.com/fluency/96/chat.png" alt="CommentFlow" style="width: 64px; margin-bottom: 1rem;">
-           <h2 class="title is-4 mb-2">CommentFlow</h2>
-          <p class="subtitle is-6 has-text-grey mb-4">Smart Facebook Comment Monitoring</p>
-          <button id="login-btn" class="button is-medium facebook-button is-fullwidth">
-            <span class="icon"><i class="fab fa-facebook"></i></span> <span>Sign in with Facebook</span>
-          </button>
-          <p class="is-size-7 has-text-grey mt-3">Powered by Firebase Auth</p>
+    <div class="login-bg"></div>
+    <div class="login-container">
+      <div class="login-card">
+        <div class="login-card-icon">
+          <i class="fas fa-comment-dots"></i>
         </div>
+        <h2 class="login-title">CommentFlow</h2>
+        <p class="login-subtitle">Smart Facebook Comment Monitoring</p>
+        <button id="login-btn" class="login-facebook-btn">
+          <span class="login-facebook-icon"><i class="fab fa-facebook"></i></span>
+          <span>Sign in with Facebook</span>
+        </button>
+        <p class="login-footer">Powered by Firebase Auth</p>
       </div>
     </div>
   </div>
