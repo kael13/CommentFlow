@@ -1,4 +1,40 @@
-export function classifyComment(text) {
+import { classifyText, isLLMAvailable } from '@commentflow/shared';
+import { createQueue, createWorker, enqueueAndWait } from '@commentflow/shared';
+import { logger } from '@commentflow/shared';
+
+const classificationQueue = createQueue('comment-classification');
+
+createWorker(classificationQueue, async (job) => {
+  const { text, commentId } = job.data;
+  const result = await classifyText(text);
+  if (result) return result;
+  return classifyWithKeywords(text);
+});
+
+export async function classifyComment(text, commentId) {
+  if (!isLLMAvailable()) {
+    logger.info('LLM unavailable, using keyword fallback', { commentId });
+    return classifyWithKeywords(text);
+  }
+
+  try {
+    const result = await enqueueAndWait(classificationQueue, { text, commentId }, 30000);
+    logger.info('Classification via LLM', { commentId, intent: result.intent });
+    return result;
+  } catch (err) {
+    logger.warn('LLM classification failed, falling back to keywords', {
+      commentId,
+      error: err.message,
+    });
+    return classifyWithKeywords(text);
+  }
+}
+
+export function classifyBackground(text) {
+  return classifyWithKeywords(text);
+}
+
+function classifyWithKeywords(text) {
   const lower = text.toLowerCase();
 
   const buyingSignals = [

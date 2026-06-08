@@ -24,3 +24,19 @@ export {
   errorMiddleware,
 } from "./errors.js";
 export { validateBody, validateQuery, validateParams } from "./validate.js";
+export {
+  LLMError,
+  isLLMAvailable,
+  callOpenRouter,
+  classifyText,
+  generateReply,
+  checkSpam,
+} from "./llm.js";
+export {
+  createQueue,
+  createWorker,
+  enqueueJob,
+  enqueueAndWait,
+  getQueueStats,
+  shutdownQueues,
+} from "./queue.js";

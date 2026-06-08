@@ -1,4 +1,16 @@
+import { checkSpam as llmCheckSpam, isLLMAvailable } from "@commentflow/shared";
+import { createQueue, createWorker, enqueueAndWait } from "@commentflow/shared";
+import { logger } from "@commentflow/shared";
 import { query as dbQuery } from "@commentflow/shared";
+
+const spamQueue = createQueue("spam-check");
+
+createWorker(spamQueue, async (job) => {
+  const { text } = job.data;
+  const llmResult = await llmCheckSpam(text);
+  if (llmResult) return llmResult;
+  return checkWithRegex(text);
+});
 
 let cachedKeywords = null;
 let cacheTimestamp = 0;
@@ -28,7 +40,7 @@ function countMatches(text, pattern) {
   return matches ? matches.length : 0;
 }
 
-export function checkComment(text, strictness = 5) {
+export function checkWithRegex(text, strictness = 5) {
   const normalizedText = text.trim();
   const textLower = normalizedText.toLowerCase();
   let score = 0;
@@ -79,6 +91,47 @@ export function checkComment(text, strictness = 5) {
     reason: reasons.length > 0 ? reasons.join("; ") : "No spam indicators",
     score,
   };
+}
+
+export async function checkComment(text, strictness = 5) {
+  const regexResult = checkWithRegex(text, strictness);
+  const threshold = strictness * 10;
+  const isBorderline = Math.abs(regexResult.score - threshold) <= 20;
+
+  if (isLLMAvailable() && isBorderline) {
+    try {
+      const llmResult = await enqueueAndWait(spamQueue, { text }, 15000);
+      if (llmResult && typeof llmResult.score === "number") {
+        const llmScore = llmResult.score;
+        const finalScore = Math.round(regexResult.score * 0.4 + llmScore * 0.6);
+        const isSpam = finalScore >= threshold;
+
+        logger.info("Spam check: regex + LLM combined", {
+          regexScore: regexResult.score,
+          llmScore,
+          finalScore,
+          isSpam,
+        });
+
+        return {
+          isSpam,
+          reason: isSpam
+            ? `LLM-enhanced: ${regexResult.reason}`
+            : regexResult.reason,
+          score: finalScore,
+        };
+      }
+    } catch (err) {
+      logger.warn("LLM spam check failed, falling back to regex", { error: err.message });
+    }
+  }
+
+  logger.info("Spam check: regex only", {
+    score: regexResult.score,
+    isSpam: regexResult.isSpam,
+  });
+
+  return regexResult;
 }
 
 export async function detectTroll(authorFbId) {

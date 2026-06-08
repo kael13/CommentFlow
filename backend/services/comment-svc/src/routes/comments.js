@@ -132,7 +132,7 @@ router.post("/classify", async (req, res, next) => {
       throw new NotFoundError("Comment not found");
     }
 
-    const classification = classifyComment(text);
+    const classification = await classifyComment(text, comment_id);
     const comment = await classifyAndUpdate(comment_id, classification);
 
     logger.info("Comment classified", { id: comment_id, intent: classification.intent });

@@ -93,6 +93,15 @@ services:
       DB_PASSWORD_FILE: /run/secrets/db_password
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
+      OPENROUTER_BASE_URL: ${OPENROUTER_BASE_URL:-https://openrouter.ai/api/v1}
+      OPENROUTER_MODEL: ${OPENROUTER_MODEL:-openai/gpt-4o-mini}
+      OPENROUTER_FALLBACK_MODEL: ${OPENROUTER_FALLBACK_MODEL:-google/gemini-2.0-flash-lite}
+      OPENROUTER_MAX_RETRIES: ${OPENROUTER_MAX_RETRIES:-3}
+      LLM_RATE_LIMIT_RPM: ${LLM_RATE_LIMIT_RPM:-20}
+      LLM_JOB_TIMEOUT_MS: ${LLM_JOB_TIMEOUT_MS:-30000}
+      SITE_URL: ${SITE_URL:-http://localhost}
+      SITE_NAME: ${SITE_NAME:-CommentFlow}
     secrets:
       - db_password
       - encryption_key
@@ -182,6 +191,15 @@ services:
       DB_PASSWORD_FILE: /run/secrets/db_password
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
+      OPENROUTER_BASE_URL: ${OPENROUTER_BASE_URL:-https://openrouter.ai/api/v1}
+      OPENROUTER_MODEL: ${OPENROUTER_MODEL:-openai/gpt-4o-mini}
+      OPENROUTER_FALLBACK_MODEL: ${OPENROUTER_FALLBACK_MODEL:-google/gemini-2.0-flash-lite}
+      OPENROUTER_MAX_RETRIES: ${OPENROUTER_MAX_RETRIES:-3}
+      LLM_RATE_LIMIT_RPM: ${LLM_RATE_LIMIT_RPM:-20}
+      LLM_JOB_TIMEOUT_MS: ${LLM_JOB_TIMEOUT_MS:-30000}
+      SITE_URL: ${SITE_URL:-http://localhost}
+      SITE_NAME: ${SITE_NAME:-CommentFlow}
     secrets:
       - db_password
       - encryption_key
@@ -212,6 +230,15 @@ services:
       DB_PASSWORD_FILE: /run/secrets/db_password
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
+      OPENROUTER_BASE_URL: ${OPENROUTER_BASE_URL:-https://openrouter.ai/api/v1}
+      OPENROUTER_MODEL: ${OPENROUTER_MODEL:-openai/gpt-4o-mini}
+      OPENROUTER_FALLBACK_MODEL: ${OPENROUTER_FALLBACK_MODEL:-google/gemini-2.0-flash-lite}
+      OPENROUTER_MAX_RETRIES: ${OPENROUTER_MAX_RETRIES:-3}
+      LLM_RATE_LIMIT_RPM: ${LLM_RATE_LIMIT_RPM:-20}
+      LLM_JOB_TIMEOUT_MS: ${LLM_JOB_TIMEOUT_MS:-30000}
+      SITE_URL: ${SITE_URL:-http://localhost}
+      SITE_NAME: ${SITE_NAME:-CommentFlow}
     secrets:
       - db_password
       - encryption_key
