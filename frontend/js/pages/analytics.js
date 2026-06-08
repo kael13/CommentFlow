@@ -56,7 +56,7 @@ function renderPagination(containerId, totalPages, currentPage, callback) {
   });
 }
 
-let analyticsCharts = [];
+analyticsCharts = [];
 
 function formatDuration(seconds) {
   if (!seconds) return 'N/A';

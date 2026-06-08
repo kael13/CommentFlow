@@ -10,6 +10,12 @@ let firebaseApp = null;
 function initFirebase() {
   if (firebaseApp) return;
 
+  // Dev mode: skip Firebase Admin and accept any token
+  if (process.env.NODE_ENV === "development" && process.env.DEV_SKIP_AUTH === "true") {
+    logger.warn("DEV MODE: Firebase auth bypass enabled — any Bearer token will be accepted");
+    return;
+  }
+
   try {
     let serviceAccount;
 
@@ -31,7 +37,7 @@ function initFirebase() {
     });
     logger.info("Firebase Admin SDK initialized");
   } catch (err) {
-    logger.error("Failed to initialize Firebase Admin SDK", { error: err });
+    logger.error("Failed to initialize Firebase Admin SDK", { error: err.message });
   }
 }
 
@@ -40,6 +46,17 @@ initFirebase();
 export async function authenticate(req, _res, next) {
   try {
     const authHeader = req.headers.authorization;
+
+    // Dev mode: accept any request with a dev user
+    if (process.env.NODE_ENV === "development" && process.env.DEV_SKIP_AUTH === "true") {
+      req.user = {
+        id: authHeader ? "dev-authed-user" : "dev-user-id",
+        email: "dev@example.com",
+        name: "Dev User",
+        picture: null,
+      };
+      return next();
+    }
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       throw new UnauthorizedError(
