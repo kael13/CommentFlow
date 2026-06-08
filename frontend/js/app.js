@@ -17,16 +17,12 @@ function navigate(page) {
   // Hide all pages
   document.querySelectorAll('.page').forEach(p => {
     p.classList.remove('active');
-    p.classList.remove('page-enter');
   });
 
   // Show target page with animation
   const pageEl = document.getElementById(`page-${page}`);
   if (pageEl) {
     pageEl.classList.add('active');
-    // Trigger reflow then add animation class
-    void pageEl.offsetWidth;
-    pageEl.classList.add('page-enter');
   }
 
   // Update sidebar

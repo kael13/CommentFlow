@@ -94,17 +94,24 @@
   }
 }
 
-/* ── Page Visibility ── */
+/* ── Dashboard Content Grid ── */
+.main-content {
+  display: grid;
+  grid-template: 1fr / 1fr;
+  overflow: hidden;
+}
+
 .page {
-  display: none;
+  grid-area: 1 / 1;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  overflow-y: auto;
+  z-index: 1;
 }
 
 .page.active {
-  display: block;
-  animation: fadeIn 0.2s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 2;
 }
